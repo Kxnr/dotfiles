@@ -1,5 +1,7 @@
 " Vundle setup 
 set nocompatible
+set modeline
+set modelines=10
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -8,6 +10,7 @@ call vundle#begin()
 " Plugins
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'vimwiki/vimwiki'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'tomtom/tcomment_vim'
@@ -24,6 +27,7 @@ filetype plugin indent on
 " switch vimwiki to markdown
 let g:vimwiki_list = [{'path': '~/vimwiki/',
                       \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
 
 
 " options for vim indent guides
