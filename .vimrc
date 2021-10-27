@@ -133,6 +133,13 @@ nnoremap g0 0
 nnoremap g$ $
 nnoremap g^ g
 
+innoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+inoremap <C-j> <Esc>:m .+1<CR>==gi
+inoremap <C-k> <Esc>:m .-2<CR>==gi
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
 " make cursor stick to center with line
 set scrolloff=9999
 set cursorline
