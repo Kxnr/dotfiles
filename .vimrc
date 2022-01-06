@@ -18,6 +18,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'fneu/breezy'
 Plugin 'morhetz/gruvbox'
+Plugin 'tpope/vim-surround'
 " End Plugins
 
 call vundle#end()
