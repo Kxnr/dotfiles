@@ -4,10 +4,9 @@ set modeline
 set modelines=10
 filetype plugin indent on
 
-Plug "preservim/nerdtree"
-Plug "tpope/vim-surround"
-Plug "easymotion/vim-easymotion"
-
+set nerdtree
+set surround
+set easymotion
 
 " stock vim options
 let mapleader=","

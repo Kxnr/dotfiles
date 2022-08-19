@@ -1,4 +1,4 @@
-" Vundle setup 
+" Vundle setup
 set nocompatible
 set modeline
 set modelines=10
@@ -18,7 +18,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'fneu/breezy'
 Plugin 'morhetz/gruvbox'
-Plugin 'tpope/vim-surround'
+Plugin 'chrisbra/csv.vim'
+Plugin 'christoomey/vim-tmux-navigator'
 " End Plugins
 
 call vundle#end()
@@ -30,15 +31,53 @@ let g:vimwiki_list = [{'path': '~/vimwiki/',
                       \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_global_ext = 0
 
+" csv plugin
+let g:csv_delim=','
 
 " options for vim indent guides
 let g:indent_guides_guide_size = 1
 let g:indent_guides_color_change_percent = 3
 let g:indent_guides_enable_on_vim_startup = 1
 
+" options for you complete me, specific to each machine
+let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
+
 " stock vim options
-let mapleader=","
+nnoremap <SPACE> <Nop>
+let mapleader=" "
 syntax on
+
+nnoremap ; :
+vnoremap ; :
+nnoremap : ;
+vnoremap : ;
+
+" split bindings
+nnoremap <leader>\ :vs<CR>
+nnoremap <leader>- :split<CR>
+
+nnoremap <leader>j <C-W><C-J>
+nnoremap <leader>k <C-W><C-K>
+nnoremap <leader>l <C-W><C-L>
+nnoremap <leader>h <C-W><C-H>
+
+" buffer bindings
+let switchbuf="useopen"
+nnoremap <leader>bl :buffers<CR>
+nnoremap <leader>b <C-^>
+
+" tab bindings
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>tm :tabmove
+nnoremap <leader>tc :tabclose<CR>
+nnoremap <leader>to :tabonly<CR>
+
+" open file
+" TODO: open in tab/split/current window
+" nnoremap <leader>t
+" nnoremap <leader>e
+" nnoremap <leader>w\
+" nnoremap <leader>w-
 
 " NERDTree mappings
 nnoremap <leader>nt :NERDTreeToggle<CR>
@@ -73,14 +112,15 @@ highlight ColorColumn ctermbg=0 guibg=darkcyan
 set number
 set relativenumber
 
-" ????
-set hidden
 
 " delete without overwrite
 noremap <Leader>d "_d
 noremap <Leader>D "_D
 noremap <Leader>p "0p
 noremap <Leader>P "0P
+
+" yank to copy register
+noremap <Leader>y "+y
 
 " search options
 set ignorecase
@@ -90,12 +130,12 @@ set showmatch
 set incsearch
 set hlsearch
 
-nnoremap <leader><space> :nohlsearch<CR>
+nnoremap <leader>/ :nohlsearch<CR>
 
-" ????
 set backspace=indent,eol,start
 set autoindent
 set laststatus=2
+set hidden
 
 " indent options
 set shiftwidth=2
@@ -103,7 +143,6 @@ set softtabstop=2
 set expandtab
 
 
-"todo: folding
 " fold by indent, and manual
 augroup vimrc
   au BufReadPre * setlocal foldmethod=indent
@@ -134,11 +173,17 @@ nnoremap g0 0
 nnoremap g$ $
 nnoremap g^ g
 
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-inoremap <C-j> <Esc>:m .+1<CR>==gi
-inoremap <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
-
+" make cursor stick to center with line
+" centering replaced by knowing shortcuts: use zz, zt, and zb to center, top,
+" and bottom current line
 set cursorline
+
+" move code blocks with Alt
+nnoremap <A-j> :m .+1<CR>
+nnoremap <A-k> :m .-2<CR>
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-K> :m '<-2<CR>gv=gv
+
+" Easy reload
+nnoremap <Leader>r :source $MYVIMRC<CR>
+
