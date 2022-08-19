@@ -179,10 +179,10 @@ nnoremap g^ g
 set cursorline
 
 " move code blocks with Alt
-nnoremap <A-j> :m .+1<CR>
-nnoremap <A-k> :m .-2<CR>
-vnoremap <A-j> :m '>+1<CR>gv=gv
-vnoremap <A-K> :m '<-2<CR>gv=gv
+nnoremap <C-J> :m .+1<CR>==
+nnoremap <C-K> :m .-2<CR>==
+vnoremap <C-J> :m '>+1<CR>gv=gv
+vnoremap <C-K> :m '<-2<CR>gv=gv
 
 " Easy reload
 nnoremap <Leader>r :source $MYVIMRC<CR>
