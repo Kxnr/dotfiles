@@ -1,94 +1,12 @@
-" Vundle setup 
-set nocompatible
-set modeline
-set modelines=10
-filetype plugin indent on
+source ~/.vimrc
+" TODO: add these to .vimrc
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'tommcdo/vim-exchange'
+Plug 'vim-scripts/argtextobj.vim'
+Plug 'tpope/vim-surround'
+let g:argtextobj_pairs="[:],(:),<:>"
+vnoremap < <gv
+vnoremap > >gv
 
-set nerdtree
-set surround
-set easymotion
-
-" stock vim options
-let mapleader=","
-syntax on
-
-" NERDTree mappings
-nnoremap <leader>nt :NERDTreeToggle<CR>
-
-" create light grey ruler at col 80
-set colorcolumn=100
-highlight ColorColumn ctermbg=0 guibg=darkcyan
-
-" make numbers hybrid
-set number
-set relativenumber
-
-" ????
-set hidden
-
-" delete without overwrite
-noremap <Leader>d "_d
-noremap <Leader>D "_D
-noremap <Leader>p "0p
-noremap <Leader>P "0P
-
-" search options
-set ignorecase
-set smartcase
-
-set showmatch
-set incsearch
-set hlsearch
-
-nnoremap <leader><space> :nohlsearch<CR>
-
-" ????
-set backspace=indent,eol,start
-set autoindent
-set laststatus=2
-
-" indent options
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-
-
-"todo: folding
-" fold by indent, and manual
-augroup vimrc
-  au BufReadPre * setlocal foldmethod=indent
-  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
-augroup END
-set foldenable
-set foldlevelstart=10
-set foldnestmax=10  
-set foldcolumn=1
-
-
-" wrapping and wrap motion 
-set wrap
-set linebreak
-set nolist
-" set textwidth=100
-set listchars=tab:.\ ,trail:_,extends:>,precedes:<,nbsp:~
-
-nnoremap j gj
-nnoremap k gk
-nnoremap 0 g0
-nnoremap $ g$
-nnoremap ^ g^
-
-nnoremap gj j
-nnoremap gk k
-nnoremap g0 0
-nnoremap g$ $
-nnoremap g^ g
-
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-inoremap <C-j> <Esc>:m .+1<CR>==gi
-inoremap <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
-
-set cursorline
+nnoremap [[ ?^\s*\(class\|def\)<CR>
+nnoremap ]] /^\s*\(class\|def\)<CR>
