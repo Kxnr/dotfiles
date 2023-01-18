@@ -26,21 +26,15 @@ call vundle#end()
 filetype plugin indent on
 " End Vundle setup
 
-" switch vimwiki to markdown
-let g:vimwiki_list = [{'path': '~/vimwiki/',
-                      \ 'syntax': 'markdown', 'ext': '.md'}]
-let g:vimwiki_global_ext = 0
+" WSL yank support
+let s:clip = '/mnt/c/Windows/System32/clip.exe'
+if executable(s:clip)
+  augroup WSLYank
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+  augroup END
+endif
 
-" csv plugin
-let g:csv_delim=','
-
-" options for vim indent guides
-let g:indent_guides_guide_size = 1
-let g:indent_guides_color_change_percent = 3
-let g:indent_guides_enable_on_vim_startup = 1
-
-" options for you complete me, specific to each machine
-let g:ycm_path_to_python_interpreter = '/usr/bin/python3'
 
 " stock vim options
 nnoremap <SPACE> <Nop>
@@ -51,6 +45,26 @@ nnoremap ; :
 vnoremap ; :
 nnoremap : ;
 vnoremap : ;
+
+" switch vimwiki to markdown
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+                      \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
+
+" Open new vimwiki diary pages with a template
+" https://frostyx.cz/posts/vimwiki-diary-template
+au BufNewFile ~/vimwiki/diary/*.md :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
+
+" csv plugin
+let g:csv_delim=','
+
+" options for vim indent guides
+let g:indent_guides_guide_size = 1
+let g:indent_guides_color_change_percent = 3
+let g:indent_guides_enable_on_vim_startup = 1
+
+" options for you complete me, specific to each machine
+let g:ycm_path_to_python_interpreter = '/home/kxnr/.venv/vim/bin/python'
 
 " split bindings
 nnoremap <leader>\ :vs<CR>
@@ -63,7 +77,7 @@ nnoremap <leader>h <C-W><C-H>
 
 " buffer bindings
 let switchbuf="useopen"
-nnoremap <leader>bl :buffers<CR>
+nnoremap <leader>bl :ls<CR>:b<Space>
 nnoremap <leader>b <C-^>
 
 " tab bindings
@@ -114,13 +128,13 @@ set relativenumber
 
 
 " delete without overwrite
-noremap <Leader>d "_d
-noremap <Leader>D "_D
-noremap <Leader>p "0p
-noremap <Leader>P "0P
+noremap <leader>d "_d
+noremap <leader>D "_D
+noremap <leader>p "0p
+noremap <leader>P "0P
 
 " yank to copy register
-noremap <Leader>y "+y
+noremap <leader>y "+y
 
 " search options
 set ignorecase
@@ -178,12 +192,11 @@ nnoremap g^ g
 " and bottom current line
 set cursorline
 
-" move code blocks with Alt
+" move code blocks with Ctrl
 nnoremap <C-J> :m .+1<CR>==
 nnoremap <C-K> :m .-2<CR>==
 vnoremap <C-J> :m '>+1<CR>gv=gv
 vnoremap <C-K> :m '<-2<CR>gv=gv
 
 " Easy reload
-nnoremap <Leader>r :source $MYVIMRC<CR>
-
+nnoremap <leader>r :source $MYVIMRC<CR>
