@@ -160,5 +160,5 @@ vim.api.nvim_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", { no
 vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = True, silent = true })
 
 vim.keymap.set("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = True, silent = true })
-vim.keymap.set("n", "<leader><C-S-f>", "<cmd>lua require('fzf-lua').grep_project()<CR>", { noremap = True, silent = true })
+vim.keymap.set("n", "<leader><leader><C-f>", "<cmd>lua require('fzf-lua').live_grep()<CR>", { noremap = True, silent = true })
 
