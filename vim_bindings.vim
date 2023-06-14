@@ -24,7 +24,7 @@ Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'ibhagwan/fzf-lua'
 Plugin 'tpope/vim-fugitive'
 Plugin 'nvim-treesitter/nvim-treesitter'
-Plugin 'natecraddock/workspaces.nvim'
+Plugin 'nvim-treesitter/nvim-treesitter-textobjects'
 Plugin 'Vigemus/iron.nvim'
 Plugin 'ggandor/leap.nvim'
 Plugin 'godlygeek/tabular'
@@ -32,20 +32,22 @@ Plugin 'preservim/vim-markdown'
 Plugin 'nvim-lua/plenary.nvim'
 Plugin 'jcdickinson/codeium.nvim'
 Plugin 'neovim/nvim-lspconfig'
+Plugin 'hrsh7th/nvim-cmp'
 Plugin 'hrsh7th/cmp-nvim-lsp'
 Plugin 'hrsh7th/cmp-buffer'
 Plugin 'hrsh7th/cmp-path'
-Plugin 'hrsh7th/cmp-cmdline'
-Plugin 'hrsh7th/nvim-cmp'
+Plugin 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plugin 'hrsh7th/cmp-emoji'
 Plugin 'hrsh7th/vim-vsnip'
 Plugin 'hrsh7th/vim-vsnip-integ'
+Plugin 'hrsh7th/cmp-vsnip'
 Plugin 'nvim-tree/nvim-web-devicons'
 Plugin 'akinsho/bufferline.nvim'
-Plugin 'hrsh7th/cmp-vsnip'
 Plugin 'rafamadriz/friendly-snippets'
-Plugin 'nvim-treesitter/nvim-treesitter-textobjects'
 Plugin 'danymat/neogen'
 Plugin 'Pocco81/auto-save.nvim'
+Plugin 'windwp/nvim-autopairs'
+Plugin 'RRethy/vim-illuminate'
 "End Plugins
 
 call vundle#end()
@@ -72,6 +74,7 @@ let mapleader=" "
 syntax on
 let signcolumn = 1
 let updatetime = 250
+set lazyredraw
 
 nnoremap ; :
 vnoremap ; :
@@ -87,7 +90,11 @@ let g:vimwiki_list = [{
 	\ 'ext': '.md',
 	\ 'path_html': '~/vimwiki/site_html/',
 	\ 'custom_wiki2html': 'vimwiki_markdown',
-	\ 'template_ext': '.tpl'}]
+	\ 'template_ext': '.tpl',
+        \ 'auto_toc': 1,
+        \ 'diary_frequency': 'weekly',
+        \ 'cycle_bullets': 1,
+        \ 'auto_diary_index': 1}]
 let g:vimwiki_global_ext = 0
 
 " Open new vimwiki diary pages with a template
@@ -234,3 +241,6 @@ vnoremap <A-K> :m '<-2<CR>gv=gv
 
 tnoremap <Esc> <C-\><C-n>
 
+" let g:minimap_width = 10
+" let g:minimap_auto_start = 1
+" let g:minimap_auto_start_win_enter = 1

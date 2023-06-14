@@ -9,31 +9,31 @@ require('leap')
 require('fzf-lua').setup({"default"})
 local iron = require('iron.core')
 
-require('lspconfig').pyright.setup({})
 require('lspconfig').pylsp.setup({
   settings = {
     pylsp = {
       plugins = {
         ruff = {
           enabled = True
+        },
+        mypy = {
+          enabled = True
         }
       }
     }
   }
 })
-require('workspaces').setup()
 require('codeium').setup({})
-require('neogen').setup({ snippet_engine = "vsnip" })
 require('auto-save').setup({
   trigger_events = {
     "InsertLeave",
     "TextChanged",
     "FocusLost"
   },
-  debounce_delay = 1000
+  debounce_delay = 5000
 })
 
-  -- Set up lspconfig.
+-- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local servers = {'pylsp', 'pyright'}
 for _, lsp in ipairs(servers) do
@@ -56,7 +56,11 @@ cmp.setup({
     { name = 'vsnip' }, 
     { name = 'codeium' },
     { name = 'buffer' },
-    { name = "treesitter" },
+    { name = 'path' },
+    { name = 'cmdline' },
+    { name = 'treesitter' },
+    { name = 'emoji' },
+    { name = 'nvim_lsp_signature_help' }
   },
   mapping = {
     ['<CR>'] = cmp.mapping.confirm {
@@ -141,15 +145,29 @@ require('nvim-treesitter.configs').setup {
 
 iron.setup({
   config =  {
+    repl_open_cmd = require("iron.view").split.vertical(.3),
     scratch_repl = true,
     repl_definition = {
       python = {
-        command = {"python"},
+        command = {"ipython"},
       },
-      repl_open_cmd = require("iron.view").right('30%'),
     }
   }
 })
+
+require("neogen").setup({
+  snippet_engine = "vsnip",
+  languages = {
+    python = {
+      template = {
+        annotation_convention = "reST",
+        position = "after"
+      }
+    }
+  }
+})
+require("nvim-autopairs").setup()
+require("illuminate").configure()
 
 vim.keymap.set('n', '<leader><leader>py', '<cmd>IronFocus<CR>')
 
@@ -162,3 +180,7 @@ vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<C
 vim.keymap.set("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = True, silent = true })
 vim.keymap.set("n", "<leader><leader><C-f>", "<cmd>lua require('fzf-lua').live_grep()<CR>", { noremap = True, silent = true })
 
+-- https://github.com/fatih/vim-go/issues/1757
+vim.cmd "autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif"
+
+-- vim.api.nvim_set_keymap("n", "<Leader>neo", ":lua require('neogen').generate()<CR>", opts)
