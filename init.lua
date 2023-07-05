@@ -3,28 +3,24 @@ vim.cmd('nnoremap <leader>r :luafile $MYVIMRC<CR>')
 
 vim.g.python3_host_prog = "/home/kxnr/.venv/base/bin/python3"
 
-require('nvim-treesitter.configs').setup({ensure_installed = "all", highlight = { enable = true}})
+-- workaround for slow plugins: https://github.com/neovim/neovim/issues/23725
+local ok, wf = pcall(require, "vim.lsp._watchfiles")
+if ok then
+   -- disable lsp watcher. Too slow on linux
+   wf._watchfunc = function()
+     return function() end
+   end
+end
+
+require('nvim-treesitter.configs').setup({highlight = { enable = true}})
 require('plenary.async')
 require('leap')
+require('flit').setup()
 require('fzf-lua').setup({"default"})
 local iron = require('iron.core')
 
-require('lspconfig').pylsp.setup({
-  settings = {
-    pylsp = {
-      plugins = {
-        ruff = {
-          enabled = True
-        },
-        mypy = {
-          enabled = True
-        }
-      }
-    }
-  }
-})
-require('codeium').setup({})
-require('auto-save').setup({
+-- require('codeium').setup({})
+require('auto-save').setuprepl({
   trigger_events = {
     "InsertLeave",
     "TextChanged",
@@ -35,12 +31,44 @@ require('auto-save').setup({
 
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local servers = {'pylsp', 'pyright'}
-for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup({
-    capabilities = capabilities
-  })
-end
+local lsp_cfg = require('lspconfig')
+lsp_cfg.pylsp.setup({
+  capabilities = capabilities,
+  settings = {
+    pylsp = {
+      plugins = {
+        jedi_completion = {
+          enabled = true,
+          include_class_objects = true,
+          include_function_objects = true,
+          fuzzy = true,
+        },
+        ruff = {
+          enabled = true,
+        },
+	mypy = {
+	  enabled = true,
+          dmypy = true,
+          live_mode = false,
+          strict = true,
+	},
+	black = {
+	  enabled = true,
+	},
+        isort = {
+          enabled = true,
+        },
+        rope_autoimport = {
+          enabled = true
+        },
+      }
+    }
+  }
+})
+lsp_cfg.svelte.setup({
+  capabilities = capabilities,
+})
+
 
 local feedkey = function(key, mode)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
@@ -54,13 +82,13 @@ cmp.setup({
   sources = {
     { name = 'nvim_lsp' }, 
     { name = 'vsnip' }, 
-    { name = 'codeium' },
+    -- { name = 'codeium' },
+    { name = 'treesitter' },
+    { name = 'nvim_lsp_signature_help' },
     { name = 'buffer' },
     { name = 'path' },
     { name = 'cmdline' },
-    { name = 'treesitter' },
     { name = 'emoji' },
-    { name = 'nvim_lsp_signature_help' }
   },
   mapping = {
     ['<CR>'] = cmp.mapping.confirm {
@@ -168,19 +196,35 @@ require("neogen").setup({
 })
 require("nvim-autopairs").setup()
 require("illuminate").configure()
+-- require("template").setup({
+--   temp_dir = "/home/kxnr/templates"
+-- })
+require('openscad').setup({})
 
-vim.keymap.set('n', '<leader><leader>py', '<cmd>IronFocus<CR>')
+
+vim.keymap.set('n', '<leader>repl', '<cmd>IronFocus<CR>')
 
 vim.cmd([[set completeopt=menu,menuone,noselect,preview]])
 vim.api.nvim_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", { noremap = True, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = True, silent = true })
+vim.api.nvim_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true})
 
-vim.keymap.set("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = True, silent = true })
-vim.keymap.set("n", "<leader><leader><C-f>", "<cmd>lua require('fzf-lua').live_grep()<CR>", { noremap = True, silent = true })
+vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep()<CR>", { noremap = true, silent = true })
 
 -- https://github.com/fatih/vim-go/issues/1757
+-- open quickfix full width
 vim.cmd "autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif"
 
--- vim.api.nvim_set_keymap("n", "<Leader>neo", ":lua require('neogen').generate()<CR>", opts)
+vim.api.nvim_set_keymap("n", "<Leader>ng", "<cmd>Neogen", {noremap = true, silent=true})
+
+-- init bi-directional search with <leader><leader>
+-- TODO: should this be <leader>/, to match the logic of flit?
+-- the current is based on easymotion's default.
+vim.keymap.set("n", "<leader><leader>", function ()
+  local current_window = vim.fn.win_getid()
+  require('leap').leap { target_windows = { current_window } }
+end)
+vim.api.nvim_set_keymap("n", "<leader>qf", "<cmd>lua vim.diagnostic.setqflist()<CR>", { noremap = true, silent = true })

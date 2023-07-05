@@ -27,6 +27,7 @@ Plugin 'nvim-treesitter/nvim-treesitter'
 Plugin 'nvim-treesitter/nvim-treesitter-textobjects'
 Plugin 'Vigemus/iron.nvim'
 Plugin 'ggandor/leap.nvim'
+Plugin 'ggandor/flit.nvim'
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
 Plugin 'nvim-lua/plenary.nvim'
@@ -48,6 +49,9 @@ Plugin 'danymat/neogen'
 Plugin 'Pocco81/auto-save.nvim'
 Plugin 'windwp/nvim-autopairs'
 Plugin 'RRethy/vim-illuminate'
+Plugin 'glepnir/template.nvim'
+Plugin 'salkin-mada/openscad.nvim'
+Plugin 'tpope/vim-repeat'
 "End Plugins
 
 call vundle#end()
@@ -104,11 +108,6 @@ au BufNewFile ~/vimwiki/diary/*.md :silent 0r !~/.vim/bin/generate-vimwiki-diary
 " csv plugin
 let g:csv_delim=','
 
-" special vim leap
-noremap <leader><leader> <Plug>(leap-forward-to)
-" TODO: would be nice to not need to use explicit Space here
-noremap <C-Space><C-Space> <Plug>(leap-backward-to)
-
 " options for vim indent guides
 let g:indent_guides_guide_size = 1
 let g:indent_guides_color_change_percent = 3
@@ -136,7 +135,8 @@ nnoremap <leader>bd :bdelete<CR>
 cnorea wd w\|bd
 
 " NERDTree mappings
-nnoremap <leader>nt :NERDTreeToggle<CR>
+nnoremap <leader>nt :NERDTreeFocus<CR>
+nnoremap <leader>ntt :NERDTreeToggle<CR>
 
 " colors!
 set background=dark
@@ -173,11 +173,10 @@ set relativenumber
 " delete without overwrite
 noremap <leader>d "_d
 noremap <leader>D "_D
-noremap <leader>p "0p
-noremap <leader>P "0P
 
-" yank to copy register
+" copy paste from copy register
 noremap <leader>y "+y
+noremap <leader>p "+p
 
 " search options
 set ignorecase
