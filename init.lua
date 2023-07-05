@@ -19,8 +19,7 @@ require('flit').setup()
 require('fzf-lua').setup({"default"})
 local iron = require('iron.core')
 
--- require('codeium').setup({})
-require('auto-save').setuprepl({
+require('auto-save').setup({
   trigger_events = {
     "InsertLeave",
     "TextChanged",
@@ -82,7 +81,6 @@ cmp.setup({
   sources = {
     { name = 'nvim_lsp' }, 
     { name = 'vsnip' }, 
-    -- { name = 'codeium' },
     { name = 'treesitter' },
     { name = 'nvim_lsp_signature_help' },
     { name = 'buffer' },
