@@ -3,7 +3,7 @@ vim.cmd('nnoremap <leader>r :luafile $MYVIMRC<CR>')
 
 vim.g.python3_host_prog = "/home/kxnr/.venv/base/bin/python3"
 
--- workaround for slow plugins: https://github.com/neovim/neovim/issues/23725
+-- workaround for slow plugins: https:--github.com/neovim/neovim/issues/23725
 local ok, wf = pcall(require, "vim.lsp._watchfiles")
 if ok then
    -- disable lsp watcher. Too slow on linux
@@ -17,12 +17,16 @@ require('plenary.async')
 require('leap')
 require('flit').setup()
 require('fzf-lua').setup({"default"})
-local iron = require('iron.core')
+require('dapui').setup()
 
+dap_python = require('dap-python')
+dap_python.setup()
+dap_python.test_runner = 'pytest'
+
+local iron = require('iron.core')
 require('auto-save').setup({
   trigger_events = {
     "InsertLeave",
-    "TextChanged",
     "FocusLost"
   },
   debounce_delay = 5000
@@ -45,29 +49,25 @@ lsp_cfg.pylsp.setup({
         ruff = {
           enabled = true,
         },
-	mypy = {
-	  enabled = true,
+        mypy = {
+        enabled = true,
           dmypy = true,
           live_mode = false,
-          strict = true,
-	},
-	black = {
-	  enabled = true,
-	},
-        isort = {
+        },
+        black = {
           enabled = true,
         },
-        rope_autoimport = {
-          enabled = true
+        isort = {
+          enabled = true,
         },
       }
     }
   }
 })
+
 lsp_cfg.svelte.setup({
   capabilities = capabilities,
 })
-
 
 local feedkey = function(key, mode)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
@@ -75,6 +75,7 @@ end
 
 local cmp = require('cmp')
 cmp.setup({
+  preselect = cmp.PreselectMode.None,
   snippet = {
     expand = function(args) vim.fn["vsnip#anonymous"](args.body) end
   },
@@ -96,18 +97,14 @@ cmp.setup({
     ["<C-j>"] = cmp.mapping.select_next_item(),
     ["<C-k>"] = cmp.mapping.select_prev_item(),
     ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif vim.fn["vsnip#jumpable"](1) == 1 then
+      if vim.fn["vsnip#jumpable"](1) == 1 then
         feedkey("<Plug>(vsnip-expand-or-jump)", "")
       else
         fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
       end
     end, {"i", "s"}),
     ["<S-Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+      if vim.fn["vsnip#jumpable"](-1) == 1 then
         feedkey("<Plug>(vsnip-jump-prev)", "")
       end
     end, {"i", "s"}),
@@ -164,6 +161,7 @@ require('nvim-treesitter.configs').setup {
       goto_previous_end = {
         ['[M'] = '@function.outer',
         ['[]'] = '@class.outer',
+
       },
     },
   },
@@ -194,13 +192,13 @@ require("neogen").setup({
 })
 require("nvim-autopairs").setup()
 require("illuminate").configure()
--- require("template").setup({
---   temp_dir = "/home/kxnr/templates"
--- })
 require('openscad').setup({})
 
-
 vim.keymap.set('n', '<leader>repl', '<cmd>IronFocus<CR>')
+vim.keymap.set('n', '<leader>dap', '<cmd>lua require("dapui").toggle()<CR>')
+vim.keymap.set('n', '<Leader>bp', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>pytest', function() require('dap-python').test_method() end)
+vim.keymap.set('n', '<Leader>dbg', function() require('dap').continue() end)
 
 vim.cmd([[set completeopt=menu,menuone,noselect,preview]])
 vim.api.nvim_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
@@ -209,14 +207,14 @@ vim.api.nvim_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", { no
 vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true})
 
-vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files({ multiprocess = True })<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep_glob({ multiprocess = True })<CR>", { noremap = true, silent = true })
 
--- https://github.com/fatih/vim-go/issues/1757
+-- https:--github.com/fatih/vim-go/issues/1757
 -- open quickfix full width
 vim.cmd "autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif"
 
-vim.api.nvim_set_keymap("n", "<Leader>ng", "<cmd>Neogen", {noremap = true, silent=true})
+vim.api.nvim_set_keymap("n", "<Leader>ng", ":Neogen ", {noremap = true})
 
 -- init bi-directional search with <leader><leader>
 -- TODO: should this be <leader>/, to match the logic of flit?
@@ -225,4 +223,5 @@ vim.keymap.set("n", "<leader><leader>", function ()
   local current_window = vim.fn.win_getid()
   require('leap').leap { target_windows = { current_window } }
 end)
-vim.api.nvim_set_keymap("n", "<leader>qf", "<cmd>lua vim.diagnostic.setqflist()<CR>", { noremap = true, silent = true })
+
+vim.api.nvim_set_keymap("n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<CR>", { noremap = true, silent = true })

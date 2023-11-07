@@ -51,13 +51,17 @@ Plugin 'RRethy/vim-illuminate'
 Plugin 'glepnir/template.nvim'
 Plugin 'salkin-mada/openscad.nvim'
 Plugin 'tpope/vim-repeat'
+Plugin 'mfussenegger/nvim-dap'
+Plugin 'mfussenegger/nvim-dap-python'
+Plugin 'rcarriga/nvim-dap-ui'
 "End Plugins
 
 call vundle#end()
 filetype plugin indent on
 
-" special xml filetype
+" special xml and json filetypes
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
+au FileType json setlocal equalprg=jq
 " End Vundle setup
 
 
@@ -101,7 +105,7 @@ let g:vimwiki_list = [{
 let g:vimwiki_global_ext = 0
 
 " Open new vimwiki diary pages with a template
-" https://frostyx.cz/posts/vimwiki-diary-template
+" https:"frostyx.cz/posts/vimwiki-diary-template
 au BufNewFile ~/vimwiki/diary/*.md :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
 
 " csv plugin
@@ -136,6 +140,8 @@ cnorea wd w\|bd
 " NERDTree mappings
 nnoremap <leader>nt :NERDTreeFocus<CR>
 nnoremap <leader>ntt :NERDTreeToggle<CR>
+nnoremap <leader>ntc :NERDTreeClose<CR>
+nnoremap <leader>ntf :NERDTreeFind<CR>
 
 " colors!
 set background=dark
@@ -202,7 +208,7 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldenable
 set foldlevelstart=10
-set foldnestmax=10  
+set foldnestmax=10
 set foldcolumn=1
 
 
@@ -239,6 +245,10 @@ vnoremap <A-K> :m '<-2<CR>gv=gv
 
 tnoremap <Esc> <C-\><C-n>
 
-" let g:minimap_width = 10
-" let g:minimap_auto_start = 1
-" let g:minimap_auto_start_win_enter = 1
+let g:minimap_width = 10
+let g:minimap_auto_start = 1
+let g:minimap_auto_start_win_enter = 1
+
+nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
+nnoremap <silent> <leader>df :lua require('dap-python').test_class()<CR>
+vnoremap <silent> <leader>ds <ESC>:lua require('dap-python').debug_selection()<CR>
