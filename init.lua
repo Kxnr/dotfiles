@@ -15,9 +15,15 @@ end
 require('nvim-treesitter.configs').setup({highlight = { enable = true}})
 require('plenary.async')
 require('leap')
+require('leap-spooky').setup()
 require('flit').setup()
 require('fzf-lua').setup({"default"})
 require('dapui').setup()
+require('ibl').setup()
+require('lualine').setup()
+require('Comment').setup()
+require('nvim-surround').setup()
+require('headlines').setup()
 
 dap_python = require('dap-python')
 dap_python.setup()
@@ -68,6 +74,8 @@ lsp_cfg.pylsp.setup({
 lsp_cfg.svelte.setup({
   capabilities = capabilities,
 })
+
+lsp_cfg.marksman.setup({})
 
 local feedkey = function(key, mode)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
@@ -191,14 +199,20 @@ require("neogen").setup({
   }
 })
 require("nvim-autopairs").setup()
-require("illuminate").configure()
 require('openscad').setup({})
 
 vim.keymap.set('n', '<leader>repl', '<cmd>IronFocus<CR>')
 vim.keymap.set('n', '<leader>dap', '<cmd>lua require("dapui").toggle()<CR>')
-vim.keymap.set('n', '<Leader>bp', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>br', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<Leader>pytest', function() require('dap-python').test_method() end)
 vim.keymap.set('n', '<Leader>dbg', function() require('dap').continue() end)
+
+
+vim.keymap.set('n', '<Leader>nt', '<cmd>Neotree<CR>')
+vim.keymap.set('n', '<Leader>ntt', '<cmd>Neotree toggle=true<CR>')
+vim.keymap.set('n', '<Leader>ntf', '<cmd>Neotree reveal=true<CR>')
+
+-- vim.keymap.set('n', '<leader>zk')
 
 vim.cmd([[set completeopt=menu,menuone,noselect,preview]])
 vim.api.nvim_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
@@ -209,6 +223,7 @@ vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.format()<CR>", 
 
 vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files({ multiprocess = True })<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep_glob({ multiprocess = True })<CR>", { noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>ws', function() require('fzf-lua').files({cwd = '~/wiki'}) end)
 
 -- https:--github.com/fatih/vim-go/issues/1757
 -- open quickfix full width
@@ -225,3 +240,74 @@ vim.keymap.set("n", "<leader><leader>", function ()
 end)
 
 vim.api.nvim_set_keymap("n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<CR>", { noremap = true, silent = true })
+
+local fzf = require "fzf-lua"
+local fzf_data = require "fzf-lua".config.__resume_data
+
+local function fzf_pages()
+  fzf.files({
+    prompt = "Wiki files>",
+    cwd = vim.g.wiki_root,
+    actions = {
+      ['default'] = function(selected)
+        local note = selected[1]
+        if not note then
+          if fzf_data.last_query then
+            note = fzf_data.last_query
+          end
+        end
+        vim.fn["wiki#page#open"](note)
+      end,
+    }
+  })
+end
+
+local function fzf_tags()
+  local tags_with_locations = vim.fn["wiki#tags#get_all"]()
+  local root = vim.fn["wiki#get_root"]()
+  local items = {}
+  for tag, locations in pairs(tags_with_locations) do
+    for _, loc in pairs(locations) do
+      local path = vim.fn["wiki#paths#relative"](loc[1], root)
+      local str = string.format("%s:%d:%s", tag, loc[2], path)
+      table.insert(items, str)
+    end
+  end
+  fzf.fzf_exec(items, {
+    actions = {
+      ['default'] = function(selected)
+        local note = vim.split(selected[1], ':')[3]
+        if note then
+          vim.fn["wiki#page#open"](note)
+        end
+      end
+    }
+  })
+end
+
+local function fzf_toc()
+  local toc = vim.fn["wiki#toc#gather_entries"]()
+  local items = {}
+  for _, hd in pairs(toc) do
+    local indent = vim.fn["repeat"](".", hd.level - 1)
+    local line = indent .. hd.header
+    table.insert(items, string.format("%d:%s", hd.lnum, line))
+  end
+  fzf.fzf_exec(items, {
+    actions = {
+      ['default'] = function(selected)
+        local ln = vim.split(selected[1], ':')[1]
+        if ln then
+          vim.fn.execute(ln)
+        end
+      end
+    }
+  })
+end
+
+vim.g.wiki_select_method = {
+  pages = fzf_pages,
+  tags = fzf_tags,
+  toc = fzf_toc,
+}
+

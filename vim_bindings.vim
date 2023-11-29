@@ -10,27 +10,32 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 "Plugins
+" vim plugins
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'vimwiki/vimwiki'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'tomtom/tcomment_vim'
-Plugin 'tpope/vim-surround'
-Plugin 'scrooloose/nerdtree'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plugin 'tpope/vim-repeat'
 Plugin 'morhetz/gruvbox'
-Plugin 'chrisbra/csv.vim'
-Plugin 'christoomey/vim-tmux-navigator'
+
+" Plugin 'scrooloose/nerdtree'
+
+" Dependencies of other plugins
+Plugin 'nvim-lua/plenary.nvim'
+Plugin 'nvim-tree/nvim-web-devicons'
+Plugin 'MunifTanjim/nui.nvim'
+
+" nvim plugins
+Plugin 'nvim-neo-tree/neo-tree.nvim'
+Plugin 'lukas-reineke/headlines.nvim'
+Plugin 'lukas-reineke/indent-blankline.nvim'
+Plugin 'kylechui/nvim-surround'
+Plugin 'numToStr/Comment.nvim'
+Plugin 'nvim-lualine/lualine.nvim'
 Plugin 'ibhagwan/fzf-lua'
-Plugin 'tpope/vim-fugitive'
 Plugin 'nvim-treesitter/nvim-treesitter'
 Plugin 'nvim-treesitter/nvim-treesitter-textobjects'
 Plugin 'Vigemus/iron.nvim'
 Plugin 'ggandor/leap.nvim'
 Plugin 'ggandor/flit.nvim'
-Plugin 'godlygeek/tabular'
-Plugin 'preservim/vim-markdown'
-Plugin 'nvim-lua/plenary.nvim'
+Plugin 'ggandor/leap-spooky.nvim'
 Plugin 'neovim/nvim-lspconfig'
 Plugin 'hrsh7th/nvim-cmp'
 Plugin 'hrsh7th/cmp-nvim-lsp'
@@ -41,19 +46,17 @@ Plugin 'hrsh7th/cmp-emoji'
 Plugin 'hrsh7th/vim-vsnip'
 Plugin 'hrsh7th/vim-vsnip-integ'
 Plugin 'hrsh7th/cmp-vsnip'
-Plugin 'nvim-tree/nvim-web-devicons'
 Plugin 'akinsho/bufferline.nvim'
 Plugin 'rafamadriz/friendly-snippets'
 Plugin 'danymat/neogen'
 Plugin 'Pocco81/auto-save.nvim'
 Plugin 'windwp/nvim-autopairs'
-Plugin 'RRethy/vim-illuminate'
-Plugin 'glepnir/template.nvim'
+" Plugin 'glepnir/template.nvim'
 Plugin 'salkin-mada/openscad.nvim'
-Plugin 'tpope/vim-repeat'
 Plugin 'mfussenegger/nvim-dap'
 Plugin 'mfussenegger/nvim-dap-python'
 Plugin 'rcarriga/nvim-dap-ui'
+Plugin 'lervag/wiki.vim'
 "End Plugins
 
 call vundle#end()
@@ -83,30 +86,12 @@ let signcolumn = 1
 let updatetime = 250
 set lazyredraw
 
+let g:wiki_root = '~/wiki'
+
 nnoremap ; :
 vnoremap ; :
 nnoremap : ;
 vnoremap : ;
-
-" switch vimwiki to markdown
-let g:vimwiki_list = [{
-	\ 'path': '~/vimwiki/',
-	\ 'template_path': '~/vimwiki/templates/',
-	\ 'template_default': 'default',
-	\ 'syntax': 'markdown',
-	\ 'ext': '.md',
-	\ 'path_html': '~/vimwiki/site_html/',
-	\ 'custom_wiki2html': 'vimwiki_markdown',
-	\ 'template_ext': '.tpl',
-        \ 'auto_toc': 1,
-        \ 'diary_frequency': 'weekly',
-        \ 'cycle_bullets': 1,
-        \ 'auto_diary_index': 1}]
-let g:vimwiki_global_ext = 0
-
-" Open new vimwiki diary pages with a template
-" https:"frostyx.cz/posts/vimwiki-diary-template
-au BufNewFile ~/vimwiki/diary/*.md :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
 
 " csv plugin
 let g:csv_delim=','
@@ -135,13 +120,13 @@ nnoremap <leader>b <C-^>
 nnoremap <leader>bn :bnext<CR>
 nnoremap <leader>bp :bprevious<CR>
 nnoremap <leader>bd :bdelete<CR>
-cnorea wd w\|bd
+" cnorea wd w\|bd
 
 " NERDTree mappings
-nnoremap <leader>nt :NERDTreeFocus<CR>
-nnoremap <leader>ntt :NERDTreeToggle<CR>
-nnoremap <leader>ntc :NERDTreeClose<CR>
-nnoremap <leader>ntf :NERDTreeFind<CR>
+" nnoremap <leader>nt :NERDTreeFocus<CR>
+" nnoremap <leader>ntt :NERDTreeToggle<CR>
+" nnoremap <leader>ntc :NERDTreeClose<CR>
+" nnoremap <leader>ntf :NERDTreeFind<CR>
 
 " colors!
 set background=dark
@@ -157,14 +142,6 @@ hi SpellRare cterm=underline ctermfg=green
 hi SpellLocal cterm=underline ctermfg=blue
 
 nnoremap <silent> <Leader>sp :setlocal spell! spelllang=en_us<CR>
-
-" background toggle
-nnoremap <silent> <Leader>bg :let &background = ( &background == "dark"? "light" : "dark" )<CR>
-
-" airline
-let g:airline_theme='gruvbox'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 0
 
 " create light grey ruler at col 80
 set colorcolumn=100
@@ -244,10 +221,6 @@ vnoremap <A-J> :m '>+1<CR>gv=gv
 vnoremap <A-K> :m '<-2<CR>gv=gv
 
 tnoremap <Esc> <C-\><C-n>
-
-let g:minimap_width = 10
-let g:minimap_auto_start = 1
-let g:minimap_auto_start_win_enter = 1
 
 nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
 nnoremap <silent> <leader>df :lua require('dap-python').test_class()<CR>
