@@ -23,7 +23,7 @@ require('ibl').setup()
 require('lualine').setup()
 require('Comment').setup()
 require('nvim-surround').setup()
-require('headlines').setup()
+require('bqf').setup()
 
 dap_python = require('dap-python')
 dap_python.setup()
@@ -223,6 +223,7 @@ vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.format()<CR>", 
 
 vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files({ multiprocess = True })<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep_glob({ multiprocess = True })<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader><A-f>", "<cmd>lua require('fzf-lua').lgrep_curbuf({ multiprocess = True })<CR>", { noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>ws', function() require('fzf-lua').files({cwd = '~/wiki'}) end)
 
 -- https:--github.com/fatih/vim-go/issues/1757
@@ -256,7 +257,9 @@ local function fzf_pages()
             note = fzf_data.last_query
           end
         end
-        vim.fn["wiki#page#open"](note)
+        print(note)
+        local file = require('fzf-lua').path.entry_to_file(note).path
+        vim.fn["wiki#page#open"](file)
       end,
     }
   })
@@ -309,5 +312,15 @@ vim.g.wiki_select_method = {
   pages = fzf_pages,
   tags = fzf_tags,
   toc = fzf_toc,
+}
+
+vim.g.wiki_journal = {
+  name = 'journal',
+  frequency='weekly',
+  date_format= {
+    daily = '%Y-%m-%d',
+    weekly = '%Y_w%V',
+    monthly = '%Y_m%m',
+ },
 }
 

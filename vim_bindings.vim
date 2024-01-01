@@ -15,8 +15,6 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-repeat'
 Plugin 'morhetz/gruvbox'
 
-" Plugin 'scrooloose/nerdtree'
-
 " Dependencies of other plugins
 Plugin 'nvim-lua/plenary.nvim'
 Plugin 'nvim-tree/nvim-web-devicons'
@@ -24,7 +22,6 @@ Plugin 'MunifTanjim/nui.nvim'
 
 " nvim plugins
 Plugin 'nvim-neo-tree/neo-tree.nvim'
-Plugin 'lukas-reineke/headlines.nvim'
 Plugin 'lukas-reineke/indent-blankline.nvim'
 Plugin 'kylechui/nvim-surround'
 Plugin 'numToStr/Comment.nvim'
@@ -57,6 +54,7 @@ Plugin 'mfussenegger/nvim-dap'
 Plugin 'mfussenegger/nvim-dap-python'
 Plugin 'rcarriga/nvim-dap-ui'
 Plugin 'lervag/wiki.vim'
+Plugin 'kevinhwang91/nvim-bqf'
 "End Plugins
 
 call vundle#end()
@@ -120,7 +118,7 @@ nnoremap <leader>b <C-^>
 nnoremap <leader>bn :bnext<CR>
 nnoremap <leader>bp :bprevious<CR>
 nnoremap <leader>bd :bdelete<CR>
-" cnorea wd w\|bd
+cnoremap wd w\|bd
 
 " NERDTree mappings
 " nnoremap <leader>nt :NERDTreeFocus<CR>
@@ -214,11 +212,11 @@ nnoremap g^ g
 " and bottom current line
 set cursorline
 
-" move code blocks with Ctrl
-nnoremap <A-J> :m .+1<CR>==
-nnoremap <A-K> :m .-2<CR>==
-vnoremap <A-J> :m '>+1<CR>gv=gv
-vnoremap <A-K> :m '<-2<CR>gv=gv
+" move code blocks with Alt 
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
 
 tnoremap <Esc> <C-\><C-n>
 
