@@ -223,3 +223,16 @@ tnoremap <Esc> <C-\><C-n>
 nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
 nnoremap <silent> <leader>df :lua require('dap-python').test_class()<CR>
 vnoremap <silent> <leader>ds <ESC>:lua require('dap-python').debug_selection()<CR>
+"
+" set markdown language fencing
+let g:markdown_fenced_languages = ['bash=sh', 'javascript', 'js=javascript', 'json=javascript', 'typescript', 'ts=typescript', 'php', 'html', 'css', 'rust', 'sql', 'py=python', 'python']
+
+" enable markdown folding, toggle headings with za, zR & zM toggle all
+let g:markdown_folding = 1
+
+" all folds start open, and bold/italic syntax hidden in markdown buffers
+augroup markdown
+  au FileType markdown setlocal syntax=markdown
+  au FileType markdown setlocal foldlevel=99
+  au FileType markdown setlocal conceallevel=2
+augroup END
