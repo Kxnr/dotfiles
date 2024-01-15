@@ -1,5 +1,3 @@
-setopt inc_append_history
-
 # Use powerline
 USE_POWERLINE="true"
 
@@ -41,7 +39,7 @@ export PATH=$PATH:$(npm config --global get prefix)/bin
 
 # Use base virtual environment
 if [[ -e $HOME/.venv/base/bin/activate ]]; then
-  source $HOME/.venv/base/bin/activate  # commented out by conda initialize
+  source $HOME/.venv/base/bin/activate
 fi
 
 
@@ -51,7 +49,7 @@ alias cat="batcat"
 alias find="fdfind"
 
 function venv {
-  source "$HOME/.venv/$1/bin/activate"  # commented out by conda initialize
+  source "$HOME/.venv/$1/bin/activate"
 }
 
 function v  {
@@ -76,21 +74,7 @@ function most-recent-tag {
   git pull --tags && git describe --tags $(git rev-list --tags --max-count=5)
 }
 
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/kxnr/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/kxnr/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/kxnr/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/kxnr/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 stty sane
+setopt SHARE_HISTORY
+
 
