@@ -76,6 +76,18 @@ lsp_cfg.svelte.setup({
 })
 
 lsp_cfg.marksman.setup({})
+lsp_cfg.rust_analyzer.setup( {
+  settings = {
+    ['rust-analyzer'] = {
+      check = {
+        command = "clippy";
+      },
+      diagnostics = {
+        enable = false;
+      }
+    }
+  }
+})
 
 local feedkey = function(key, mode)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
