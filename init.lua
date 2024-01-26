@@ -230,7 +230,6 @@ vim.keymap.set({"n", "v"}, "<leader>ff", function() vim.lsp.buf.format() end)
 vim.keymap.set("n", "<leader><S-f>", function() require('fzf-lua').files({ multiprocess = True }) end)
 vim.keymap.set("n", "<leader><C-f>", function() require('fzf-lua').live_grep_glob({ multiprocess = True }) end)
 vim.keymap.set("n", "<leader><A-f>", function() require('fzf-lua').lgrep_curbuf({ multiprocess = True }) end)
-vim.keymap.set('n', '<Leader>ws', function() require('fzf-lua').files({cwd = '~/wiki'}) end)
 
 -- https:--github.com/fatih/vim-go/issues/1757
 -- open quickfix full width
@@ -250,6 +249,9 @@ vim.keymap.set("n", "<leader>ll", function() vim.diagnostic.setloclist() end)
 
 local fzf = require "fzf-lua"
 local fzf_data = require "fzf-lua".config.__resume_data
+vim.keymap.set('n', '<Leader>ws', ':WikiPages')
+vim.keymap.set('n', '<Leader>wt', ':WikiTags')
+vim.keymap.set('n', '<Leader>wc', ':WikiToc')
 
 local function fzf_pages()
   fzf.files({
