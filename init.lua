@@ -60,12 +60,9 @@ lsp_cfg.pylsp.setup({
           dmypy = true,
           live_mode = false,
         },
-        black = {
-          enabled = true,
-        },
-        isort = {
-          enabled = true,
-        },
+        rope_autoimport = {
+          enabled = true
+        }
       }
     }
   }
@@ -214,32 +211,32 @@ require("nvim-autopairs").setup()
 require('openscad').setup({})
 
 vim.keymap.set('n', '<leader>repl', '<cmd>IronFocus<CR>')
-vim.keymap.set('n', '<leader>dap', '<cmd>lua require("dapui").toggle()<CR>')
+vim.keymap.set('n', '<leader>dap', function() require("dapui").toggle() end)
 vim.keymap.set('n', '<Leader>br', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<Leader>pytest', function() require('dap-python').test_method() end)
 vim.keymap.set('n', '<Leader>dbg', function() require('dap').continue() end)
 
 
 vim.keymap.set('n', '<Leader>nt', '<cmd>Neotree position=current toggle=true<CR>')
-vim.keymap.set('n', '<Leader>nf', '<cmd>Neotree position=current reveal=true toggle=true add <CR>')
+vim.keymap.set('n', '<Leader>nf', '<cmd>Neotree position=current reveal=true toggle=true<CR>')
 
 vim.cmd([[set completeopt=menu,menuone,noselect,preview]])
-vim.api.nvim_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true})
+vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end)
+vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end)
+vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end)
+vim.keymap.set({"n", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end)
+vim.keymap.set({"n", "v"}, "<leader>ff", function() vim.lsp.buf.format() end)
 
-vim.api.nvim_set_keymap("n", "<leader><S-f>", "<cmd>lua require('fzf-lua').files({ multiprocess = True })<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader><C-f>", "<cmd>lua require('fzf-lua').live_grep_glob({ multiprocess = True })<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader><A-f>", "<cmd>lua require('fzf-lua').lgrep_curbuf({ multiprocess = True })<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader><S-f>", function() require('fzf-lua').files({ multiprocess = True }) end)
+vim.keymap.set("n", "<leader><C-f>", function() require('fzf-lua').live_grep_glob({ multiprocess = True }) end)
+vim.keymap.set("n", "<leader><A-f>", function() require('fzf-lua').lgrep_curbuf({ multiprocess = True }) end)
 vim.keymap.set('n', '<Leader>ws', function() require('fzf-lua').files({cwd = '~/wiki'}) end)
 
 -- https:--github.com/fatih/vim-go/issues/1757
 -- open quickfix full width
 vim.cmd "autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif"
 
-vim.api.nvim_set_keymap("n", "<Leader>ng", ":Neogen ", {noremap = true})
+vim.keymap.set("n", "<Leader>ng", ":Neogen")
 
 -- init bi-directional search with <leader><leader>
 -- TODO: should this be <leader>/, to match the logic of flit?
@@ -249,7 +246,7 @@ vim.keymap.set("n", "<leader><leader>", function ()
   require('leap').leap { target_windows = { current_window } }
 end)
 
-vim.api.nvim_set_keymap("n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ll", function() vim.diagnostic.setloclist() end)
 
 local fzf = require "fzf-lua"
 local fzf_data = require "fzf-lua".config.__resume_data
