@@ -1,8 +1,6 @@
-pyls-isort
 pylsp-mypy
 pylsp-rope
 pynvim
-black
 jedi
 mypy
 mypy-extensions
@@ -11,5 +9,4 @@ python-lsp-black
 python-lsp-jsonrpc
 python-lsp-ruff
 python-lsp-server
-rope
 debugpy
