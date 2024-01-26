@@ -235,4 +235,5 @@ augroup markdown
   au FileType markdown setlocal syntax=markdown
   au FileType markdown setlocal foldlevel=99
   au FileType markdown setlocal conceallevel=2
+  au FileType markdown setlocal textwidth=100
 augroup END

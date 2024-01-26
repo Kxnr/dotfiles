@@ -48,8 +48,6 @@ lsp_cfg.pylsp.setup({
       plugins = {
         jedi_completion = {
           enabled = true,
-          include_class_objects = true,
-          include_function_objects = true,
           fuzzy = true,
         },
         ruff = {
@@ -61,7 +59,9 @@ lsp_cfg.pylsp.setup({
           live_mode = false,
         },
         rope_autoimport = {
-          enabled = true
+          enabled = true,
+          {completions = {enabled = true}},
+          {code_actions = {enabled = true}},
         }
       }
     }
