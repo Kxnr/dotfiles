@@ -12,7 +12,6 @@ if ok then
    end
 end
 
-require('nvim-treesitter.configs').setup({highlight = { enable = true}})
 require('plenary.async')
 require('leap')
 require('leap-spooky').setup()
@@ -39,6 +38,7 @@ require('auto-save').setup({
 })
 
 -- Set up lspconfig.
+vim.lsp.set_log_level("debug")
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local lsp_cfg = require('lspconfig')
 lsp_cfg.pylsp.setup({
@@ -59,10 +59,11 @@ lsp_cfg.pylsp.setup({
           dmypy = true,
           live_mode = false,
         },
+        rope_completion = {
+          enabled = true
+        },
         rope_autoimport = {
           enabled = true,
-          {completions = {enabled = true}},
-          {code_actions = {enabled = true}},
         }
       }
     }
@@ -241,6 +242,7 @@ vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end)
 vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end)
 vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end)
 vim.keymap.set({"n", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end)
+vim.keymap.set({"n", "v"}, "<leader>rn", function() vim.lsp.buf.rename() end)
 vim.keymap.set({"n", "v"}, "<leader>ff", function() vim.lsp.buf.format() end)
 
 vim.keymap.set("n", "<leader><S-f>", function() require('fzf-lua').files({ multiprocess = True }) end)
