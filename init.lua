@@ -234,8 +234,7 @@ vim.keymap.set('n', '<Leader>pytest', function() require('dap-python').test_meth
 vim.keymap.set('n', '<Leader>dbg', function() require('dap').continue() end)
 
 
-vim.keymap.set('n', '<Leader>nt', '<cmd>Neotree position=current toggle=true<CR>')
-vim.keymap.set('n', '<Leader>nf', '<cmd>Neotree position=current reveal=true toggle=true<CR>')
+vim.keymap.set('n', '<Leader>nt', '<cmd>Neotree position=current reveal=true toggle=true<CR>')
 
 vim.cmd([[set completeopt=menu,menuone,noselect,preview]])
 vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end)
