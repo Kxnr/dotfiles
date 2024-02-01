@@ -36,7 +36,6 @@ Plugin 'ggandor/flit.nvim'
 Plugin 'ggandor/leap-spooky.nvim'
 Plugin 'neovim/nvim-lspconfig'
 Plugin 'hrsh7th/nvim-cmp'
-Plugin 'hrsh7th/cmp-nvim-lsp'
 Plugin 'hrsh7th/cmp-buffer'
 Plugin 'hrsh7th/cmp-path'
 Plugin 'hrsh7th/cmp-nvim-lsp-signature-help'
@@ -44,6 +43,8 @@ Plugin 'hrsh7th/cmp-emoji'
 Plugin 'hrsh7th/vim-vsnip'
 Plugin 'hrsh7th/vim-vsnip-integ'
 Plugin 'hrsh7th/cmp-vsnip'
+Plugin 'hrsh7th/cmp-omni'
+Plugin 'hrsh7th/cmp-nvim-lsp'
 Plugin 'akinsho/bufferline.nvim'
 Plugin 'rafamadriz/friendly-snippets'
 Plugin 'danymat/neogen'
@@ -60,6 +61,7 @@ Plugin 'kevinhwang91/nvim-bqf'
 
 call vundle#end()
 filetype plugin indent on
+set omnifunc=syntaxcomplete#Complete
 
 " special xml and json filetypes
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null

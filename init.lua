@@ -113,6 +113,7 @@ cmp.setup({
     { name = 'path' },
     { name = 'cmdline' },
     { name = 'emoji' },
+    { name = 'omni' },
   },
   mapping = {
     ['<CR>'] = cmp.mapping({
@@ -282,7 +283,6 @@ local function fzf_pages()
             note = fzf_data.last_query
           end
         end
-        print(note)
         local file = require('fzf-lua').path.entry_to_file(note).path
         vim.fn["wiki#page#open"](file)
       end,
@@ -331,6 +331,10 @@ local function fzf_toc()
       end
     }
   })
+end
+
+local function wiki_link()
+
 end
 
 vim.g.wiki_select_method = {
