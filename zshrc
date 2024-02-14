@@ -11,6 +11,11 @@ if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
   source /usr/share/zsh/manjaro-zsh-prompt
 fi
 
+if [[ -e "$HOME/.local/bin/mise" ]]; then
+  export PATH="$PATH:$HOME/.local/bin/mise"
+  eval "$(mise activate zsh)"
+fi
+
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 
 # NODE

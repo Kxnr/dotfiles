@@ -267,9 +267,9 @@ vim.keymap.set("n", "<leader>ll", function() vim.diagnostic.setloclist() end)
 
 local fzf = require "fzf-lua"
 local fzf_data = require "fzf-lua".config.__resume_data
-vim.keymap.set('n', '<Leader>ws', ':WikiPages')
-vim.keymap.set('n', '<Leader>wt', ':WikiTags')
-vim.keymap.set('n', '<Leader>wc', ':WikiToc')
+vim.keymap.set('n', '<Leader>wf', ':WikiPages<CR>')
+vim.keymap.set('n', '<Leader>wt', ':WikiTags<CR>')
+vim.keymap.set('n', '<Leader>wc', ':WikiToc<CR>')
 
 local function fzf_pages()
   fzf.files({
