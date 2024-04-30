@@ -1,7 +1,7 @@
 vim.cmd('source /home/kxnr/.config/nvim/vim_bindings.vim')
 vim.cmd('nnoremap <leader>r :luafile $MYVIMRC<CR>')
 
-vim.g.python3_host_prog = "/home/kxnr/.venv/base/bin/python3"
+vim.g.python3_host_prog = "/home/kxnr/.venv/base/bin/python"
 
 -- workaround for slow plugins: https:--github.com/neovim/neovim/issues/23725
 local ok, wf = pcall(require, "vim.lsp._watchfiles")
@@ -14,10 +14,9 @@ end
 
 require('plenary.async')
 require('leap')
-require('leap-spooky').setup()
 require('flit').setup()
 require('fzf-lua').setup({"default"})
-require('dapui').setup()
+-- require('dapui').setup()
 require('ibl').setup()
 require('lualine').setup()
 require('Comment').setup()
@@ -40,41 +39,22 @@ require('auto-save').setup({
 -- Set up lspconfig.
 vim.lsp.set_log_level("debug")
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+capabilities.workspace = {
+    didChangeWatchedFiles = {
+      dynamicRegistration = true,
+    },
+}
+
 local lsp_cfg = require('lspconfig')
-lsp_cfg.pylsp.setup({
-  capabilities = capabilities,
-  settings = {
-    pylsp = {
-      plugins = {
-        jedi_completion = {
-          enabled = true,
-          fuzzy = true,
-          include_params = true,
-        },
-        ruff = {
-          enabled = true,
-        },
-        mypy = {
-        enabled = true,
-          dmypy = true,
-          live_mode = false,
-        },
-        rope_completion = {
-          enabled = true
-        },
-        rope_autoimport = {
-          enabled = true,
-        }
-      }
-    }
-  }
+lsp_cfg.pyright.setup({
+  capabilityes=capabilities
 })
 
 lsp_cfg.svelte.setup({
   capabilities = capabilities,
 })
 
-lsp_cfg.marksman.setup({})
 lsp_cfg.rust_analyzer.setup( {
   settings = {
     ['rust-analyzer'] = {
@@ -86,6 +66,11 @@ lsp_cfg.rust_analyzer.setup( {
       }
     }
   }
+})
+
+lsp_cfg.markdown_oxide.setup({
+    capabilities = capabilities, -- again, ensure that capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
+    on_attach = on_attach -- configure your on attach config
 })
 
 local feedkey = function(key, mode)
@@ -105,15 +90,22 @@ cmp.setup({
     expand = function(args) vim.fn["vsnip#anonymous"](args.body) end
   },
   sources = {
-    { name = 'nvim_lsp' }, 
     { name = 'vsnip' }, 
     { name = 'treesitter' },
     { name = 'nvim_lsp_signature_help' },
     { name = 'buffer' },
     { name = 'path' },
-    { name = 'cmdline' },
+    -- { name = 'cmdline' }, -- seems to cause issues when selecting from file list
     { name = 'emoji' },
-    { name = 'omni' },
+    -- { name = 'omni' },
+    { name = 'otter' },
+    { name = 'nvim_lsp',
+      option = {
+        markdown_oxide = {
+          keyword_pattern = [[\(\k\| \|\/\|#\)\+]]
+        }
+      }
+    },
   },
   mapping = {
     ['<CR>'] = cmp.mapping({
@@ -229,11 +221,10 @@ require("nvim-autopairs").setup()
 require('openscad').setup({})
 
 vim.keymap.set('n', '<leader>repl', '<cmd>IronFocus<CR>')
-vim.keymap.set('n', '<leader>dap', function() require("dapui").toggle() end)
+-- vim.keymap.set('n', '<leader>dap', function() require("dapui").toggle() end)
 vim.keymap.set('n', '<Leader>br', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<Leader>pytest', function() require('dap-python').test_method() end)
 vim.keymap.set('n', '<Leader>dbg', function() require('dap').continue() end)
-
 
 vim.keymap.set('n', '<Leader>nt', '<cmd>Neotree position=current reveal=true toggle=true<CR>')
 
@@ -244,6 +235,7 @@ vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end)
 vim.keymap.set({"n", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end)
 vim.keymap.set({"n", "v"}, "<leader>rn", function() vim.lsp.buf.rename() end)
 vim.keymap.set({"n", "v"}, "<leader>ff", function() vim.lsp.buf.format() end)
+vim.keymap.set({"n", "v"}, "<leader>ot", function() require("otter").activate({"python", "rust", "javascript", "lua"}) end)
 
 vim.keymap.set("n", "<leader><S-f>", function() require('fzf-lua').files({ multiprocess = True }) end)
 vim.keymap.set("n", "<leader><C-f>", function() require('fzf-lua').live_grep_glob({ multiprocess = True }) end)

@@ -1,22 +1,36 @@
+sudo add-apt-repository ppa:deadsnakes/ppa
 
-# TODO:
-# install 
-# * fzf
-# * ripgrep
-# * exa
-# * batcat
-# * fdfind
-# * powerline 10k
-# * zsh completions
-# * neovim
-# * tmux
-# * python
+# install default tools
+sudo apt-get update
 
-# set links:
-# * zshrc
-# * /usr/share zsh configs
-# * tmux conf
-# * init.lua/init.vim
+# TODO: zellij
+sudo apt-get install fzf ripgrep exa bat fd-find neovim tmux zsh
+mkdir "$HOME/src"
 
-# create:
-# * base python venv
+# make zsh the default shell
+chsh -s $(which zsh)
+
+# clone zsh profile items
+git clone git@github.com:Chrysostomus/manjaro-zsh-config.git "$HOME/src/zsh-config"
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/src/powerlevel10k"
+git clone git@github.com:zsh-users/zsh-history-substring-search.git "$HOME/src/zsh-config/plugins/zsh-history-substring-search"
+git clone git@github.com:zsh-users/zsh-autosuggestions.git "$HOME/src/zsh-config/plugins/zsh-autosuggestions"
+
+sudo ln -s "$HOME/src/zsh-config" "/usr/share/zsh"
+sudo ln -s "$HOME/src/powerlevel10k" "/usr/share/zsh-theme-powerlevel10k"
+
+# link zsh config using the given plugins
+ln -s zshrc "$HOME/.zshrc"
+ln -s vim_bindings.vim "$HOME/.config/nvim/vim_bindings.vim"
+ln -s init.lua "$HOME/.config/nvim/init.lua"
+ln -s helix.toml "$HOME/.config/helix/helix.toml"
+
+# install programming languages and associated tools
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+sudo apt-get install python3.12-venv python3.12-dev
+sudo apt-get install nvm
+
+mkdir "$HOME/.venv"
+python -m venv "$HOME/.venv/base"
+
+# TODO: helix and lsp's

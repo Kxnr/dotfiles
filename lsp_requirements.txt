@@ -4,6 +4,7 @@ pynvim
 jedi
 mypy
 mypy-extensions
+pydantic
 pytest
 python-lsp-black
 python-lsp-jsonrpc

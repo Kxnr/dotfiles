@@ -11,11 +11,6 @@ if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
   source /usr/share/zsh/manjaro-zsh-prompt
 fi
 
-if [[ -e "$HOME/.local/bin/mise" ]]; then
-  export PATH="$PATH:$HOME/.local/bin/mise"
-  eval "$(mise activate zsh)"
-fi
-
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 
 # NODE
@@ -29,12 +24,6 @@ export AZ_AUTO_LOGIN_TYPE="DEVICE"
 
 export WINHOME="/mnt/c/Users/cak88/"
 export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
-alias sbid="source $HOME/.venv/sbid/bin/activate"
-alias clean_energy="source $HOME/.venv/clean_energy/bin/activate"
-alias devapi="source $HOME/.venv/devapi/bin/activate"
-alias betaapi="source $HOME/.venv/betaapi/bin/activate"
-alias testapi="source $HOME/.venv/testapi/bin/activate"
-alias prodapi="source $HOME/.venv/prodapi/bin/activate"
 
 # NODE
 export NVM_DIR="$HOME/.nvm"
@@ -57,12 +46,18 @@ function venv {
   source "$HOME/.venv/$1/bin/activate"
 }
 
+
 function v  {
-  EXISTING_VENV=$VIRTUAL_ENV
-  venv base
+  ADD_PATHS=($VIRTUAL_ENV/lib/*/site-packages)
+  ADD_PATHS+=($PYTHONPATH)
+  BEFORE="$PYTHONPATH"
+  PYTHONPATH=${(j{:})ADD_PATHS}
   nvim $@
-  deactivate
-  source "$EXISTING_VENV/bin/activate"
+  PYTHONPATH="$BEFORE"
+}
+
+function wiki {
+  hx ~/wiki/index.md
 }
 
 function md5-compare-dirs {
@@ -79,7 +74,14 @@ function most-recent-tag {
   git pull --tags && git describe --tags $(git rev-list --tags --max-count=5)
 }
 
+function fix {
+  stty sane
+}
+
 stty sane
 setopt SHARE_HISTORY
+
+# HELIX
+# export HELIX_RUNTIME=~/src/helix/runtime
 
 

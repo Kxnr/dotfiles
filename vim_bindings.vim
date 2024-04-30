@@ -33,7 +33,6 @@ Plugin 'ray-x/cmp-treesitter'
 Plugin 'Vigemus/iron.nvim'
 Plugin 'ggandor/leap.nvim'
 Plugin 'ggandor/flit.nvim'
-Plugin 'ggandor/leap-spooky.nvim'
 Plugin 'neovim/nvim-lspconfig'
 Plugin 'hrsh7th/nvim-cmp'
 Plugin 'hrsh7th/cmp-buffer'
@@ -43,7 +42,6 @@ Plugin 'hrsh7th/cmp-emoji'
 Plugin 'hrsh7th/vim-vsnip'
 Plugin 'hrsh7th/vim-vsnip-integ'
 Plugin 'hrsh7th/cmp-vsnip'
-Plugin 'hrsh7th/cmp-omni'
 Plugin 'hrsh7th/cmp-nvim-lsp'
 Plugin 'akinsho/bufferline.nvim'
 Plugin 'rafamadriz/friendly-snippets'
@@ -57,11 +55,11 @@ Plugin 'mfussenegger/nvim-dap-python'
 Plugin 'rcarriga/nvim-dap-ui'
 Plugin 'lervag/wiki.vim'
 Plugin 'kevinhwang91/nvim-bqf'
+Plugin 'jmbuhr/otter.nvim'
 "End Plugins
 
 call vundle#end()
 filetype plugin indent on
-set omnifunc=syntaxcomplete#Complete
 
 " special xml and json filetypes
 au FileType xml setlocal equalprg=xmllint\ --format\ --recover\ -\ 2>/dev/null
@@ -123,12 +121,6 @@ nnoremap <leader>bp :bprevious<CR>
 nnoremap <leader>bd :bdelete<CR>
 cnoremap wd w\|bd
 
-" NERDTree mappings
-" nnoremap <leader>nt :NERDTreeFocus<CR>
-" nnoremap <leader>ntt :NERDTreeToggle<CR>
-" nnoremap <leader>ntc :NERDTreeClose<CR>
-" nnoremap <leader>ntf :NERDTreeFind<CR>
-
 " colors!
 set background=dark
 set termguicolors
@@ -137,10 +129,10 @@ hi clear SpellBad
 hi clear SpellCap
 hi clear SpellRare
 hi clear SpellLocal 
-hi SpellBad cterm=underline ctermfg=red
-hi SpellCap cterm=underline ctermfg=red
-hi SpellRare cterm=underline ctermfg=green
-hi SpellLocal cterm=underline ctermfg=blue
+hi SpellBad cterm=underdotted ctermbg=Red gui=underdotted guibg=Red guisp=Red
+hi SpellCap cterm=underdotted ctermbg=Red gui=underdotted guibg=Red guisp=Red
+hi SpellRare cterm=underdotted ctermbg=Green gui=underdotted guibg=Green guisp=Green
+hi SpellLocal cterm=underdotted ctermbg=Blue gui=underdotted guibg=Blue guisp=Blue
 
 nnoremap <silent> <Leader>sp :setlocal spell! spelllang=en_us<CR>
 
@@ -151,7 +143,6 @@ highlight ColorColumn ctermbg=0 guibg=darkcyan
 " make numbers hybrid
 set number
 set relativenumber
-
 
 " delete without overwrite
 noremap <leader>d "_d
@@ -181,14 +172,12 @@ set shiftwidth=2
 set softtabstop=2
 set expandtab
 
-
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldenable
 set foldlevelstart=10
 set foldnestmax=10
 set foldcolumn=1
-
 
 " wrapping and wrap motion 
 set wrap
@@ -223,10 +212,10 @@ vnoremap <A-k> :m '<-2<CR>gv=gv
 
 tnoremap <Esc> <C-\><C-n>
 
-nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
-nnoremap <silent> <leader>df :lua require('dap-python').test_class()<CR>
-vnoremap <silent> <leader>ds <ESC>:lua require('dap-python').debug_selection()<CR>
-"
+set textwidth=100
+set formatoptions+=coqn1jr
+set formatoptions-=t
+
 " set markdown language fencing
 let g:markdown_fenced_languages = ['bash=sh', 'javascript', 'js=javascript', 'json=javascript', 'typescript', 'ts=typescript', 'php', 'html', 'css', 'rust', 'sql', 'py=python', 'python']
 
@@ -239,4 +228,5 @@ augroup markdown
   au FileType markdown setlocal foldlevel=99
   au FileType markdown setlocal conceallevel=2
   au FileType markdown setlocal textwidth=100
+  au FileType markdown setlocal shiftwidth=2
 augroup END
