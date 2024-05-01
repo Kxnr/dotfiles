@@ -4,6 +4,7 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
 
 # TODO: zellij
+# TODO: switch out eza for exa
 sudo apt-get install fzf ripgrep exa bat fd-find neovim tmux zsh
 mkdir "$HOME/src"
 
@@ -25,6 +26,9 @@ ln -s vim_bindings.vim "$HOME/.config/nvim/vim_bindings.vim"
 ln -s init.lua "$HOME/.config/nvim/init.lua"
 ln -s helix.toml "$HOME/.config/helix/helix.toml"
 
+# install vim plugins
+nvim +'PlugInstall' +qa
+
 # install programming languages and associated tools
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 sudo apt-get install python3.12-venv python3.12-dev
@@ -33,4 +37,9 @@ sudo apt-get install nvm
 mkdir "$HOME/.venv"
 python -m venv "$HOME/.venv/base"
 
-# TODO: helix and lsp's
+# TODO:
+# python-lsp-server
+# ruff
+# markdown-oxide
+# rust-analyzer
+# helix
