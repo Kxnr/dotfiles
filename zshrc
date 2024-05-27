@@ -16,8 +16,8 @@ export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 # NODE
 export TERM=xterm-256color
 
-export GIT_EDITOR=vim
-export VISUAL=vim
+export GIT_EDITOR=nvim
+export VISUAL=nvim
 export EDITOR="$VISUAL"
 export PATH="$PATH:$HOME/.local/bin:/snap/bin"
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
