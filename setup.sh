@@ -25,6 +25,7 @@ ln -s zshrc "$HOME/.zshrc"
 ln -s vim_bindings.vim "$HOME/.config/nvim/vim_bindings.vim"
 ln -s init.lua "$HOME/.config/nvim/init.lua"
 ln -s helix.toml "$HOME/.config/helix/helix.toml"
+ln -s languages.toml "$HOME/.config/helix/languages.toml"
 
 # install vim plugins
 nvim +'PlugInstall' +qa
