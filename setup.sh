@@ -24,7 +24,7 @@ sudo ln -s "$HOME/src/powerlevel10k" "/usr/share/zsh-theme-powerlevel10k"
 ln -s zshrc "$HOME/.zshrc"
 ln -s vim_bindings.vim "$HOME/.config/nvim/vim_bindings.vim"
 ln -s init.lua "$HOME/.config/nvim/init.lua"
-ln -s helix.toml "$HOME/.config/helix/helix.toml"
+ln -s helix.toml "$HOME/.config/helix/config.toml"
 ln -s languages.toml "$HOME/.config/helix/languages.toml"
 
 # install vim plugins
