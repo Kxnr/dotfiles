@@ -7,6 +7,7 @@ auto-save = true
 true-color = true
 rulers = [100]
 color-modes = true
+cursorline = true
 text-width = 100
 
 [editor.cursor-shape]
@@ -17,12 +18,16 @@ select = "block"
 [editor.file-picker]
 hidden = false
 
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
 [editor.whitespace.render]
 space = "all"
 tab = "all"
 nbsp = "none"
 nnbsp = "none"
-newline = "none"
+newline = "all"
 
 [editor.whitespace.characters]
 space = "·"
@@ -32,5 +37,17 @@ tab = "→"
 newline = "⏎"
 tabpad = "·"
 
+[editor.soft-wrap]
+enable = true
+
 [editor.indent-guides]
 render = true
+
+[editor.statusline]
+left = ["mode", "spinner"]
+center = ["file-name"]
+right = ["diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type"]
+separator = "│"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
