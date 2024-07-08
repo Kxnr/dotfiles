@@ -39,7 +39,8 @@ cargo install sd --locked
 cargo install ast-grep --locked
 cargo install eza --locked
 cargo install bat --locked
-cargo install fzf --locked
+# cannot be installed from cargo
+# cargo install fzf --locked
 cargo install ripgrep --locked
 cargo install zellij --locked
 cargo install zoxied --locked

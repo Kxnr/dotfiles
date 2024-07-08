@@ -105,6 +105,4 @@ setopt SHARE_HISTORY
 # HELIX
 # export HELIX_RUNTIME=~/src/helix/runtime
 
-
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
