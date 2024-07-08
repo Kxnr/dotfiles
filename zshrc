@@ -58,7 +58,7 @@ function v  {
 }
 
 function wiki {
-  hx ~/wiki/index.md
+  hx -w ~/wiki ~/wiki/index.md
 }
 
 function md5-compare-dirs {
