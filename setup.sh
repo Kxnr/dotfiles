@@ -30,10 +30,11 @@ mkdir "$HOME/.venv"
 python -m venv "$HOME/.venv/base"
 
 # TODO:
-# python-lsp-server
 # ruff
 # markdown-oxide
 # rust-analyzer
+
+# TODO: tig
 
 cargo install sd --locked
 cargo install ast-grep --locked

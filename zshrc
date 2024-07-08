@@ -16,8 +16,8 @@ export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 # NODE
 export TERM=xterm-256color
 
-export GIT_EDITOR=nvim
-export VISUAL=nvim
+export GIT_EDITOR=hx
+export VISUAL=hx
 export EDITOR="$VISUAL"
 export PATH="$PATH:$HOME/.local/bin:/snap/bin"
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
@@ -41,6 +41,7 @@ fi
 alias ls="exa"
 alias cat="batcat"
 alias find="fdfind"
+alias z="zoxide"
 
 function venv {
   source "$HOME/.venv/$1/bin/activate"
