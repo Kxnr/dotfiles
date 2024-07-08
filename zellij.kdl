@@ -4,8 +4,7 @@ keybinds clear-defaults=true {
     }
     normal {
         bind "Ctrl Space" "Esc" { SwitchToMode "Locked"; }
-        bind "Ctrl Space p" { SwitchToMode "Pane"; }
-        // bind "Ctrl p" { SwitchToMode "Pane"; }
+        bind "Ctrl p" { SwitchToMode "Pane"; }
         bind "Ctrl n" { SwitchToMode "Resize"; }
         bind "Ctrl s" { SwitchToMode "Scroll"; }
         bind "Ctrl o" { SwitchToMode "Session"; }

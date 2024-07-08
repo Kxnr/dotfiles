@@ -21,6 +21,7 @@ sudo ln -s "$HOME/src/powerlevel10k" "/usr/share/zsh-theme-powerlevel10k"
 ln -s zshrc "$HOME/.zshrc"
 ln -s helix.toml "$HOME/.config/helix/config.toml"
 ln -s languages.toml "$HOME/.config/helix/languages.toml"
+ln -s zellij.kdl $HOME/.config/zellij/config.kdl
 
 # install programming languages and associated tools
 curl https://sh.rustup.rs -sSf | sh -s -- -y
