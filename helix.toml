@@ -51,3 +51,12 @@ separator = "│"
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
 mode.select = "SELECT"
+
+[keys.normal.space]
+"space" = "goto_word"
+
+[keys.normal]
+A-d = "delete_selection"
+d = "delete_selection_noyank"
+A-c = "change_selection"
+c = "change_selection_noyank"

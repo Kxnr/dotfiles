@@ -1,11 +1,8 @@
+# TODO: only do this if on apt-supported platform
 sudo add-apt-repository ppa:deadsnakes/ppa
-
-# install default tools
 sudo apt-get update
+sudo apt-get python3.12 git  -y
 
-# TODO: zellij
-# TODO: switch out eza for exa
-sudo apt-get install fzf ripgrep exa bat fd-find neovim tmux zsh
 mkdir "$HOME/src"
 
 # make zsh the default shell
@@ -22,18 +19,12 @@ sudo ln -s "$HOME/src/powerlevel10k" "/usr/share/zsh-theme-powerlevel10k"
 
 # link zsh config using the given plugins
 ln -s zshrc "$HOME/.zshrc"
-ln -s vim_bindings.vim "$HOME/.config/nvim/vim_bindings.vim"
-ln -s init.lua "$HOME/.config/nvim/init.lua"
 ln -s helix.toml "$HOME/.config/helix/config.toml"
 ln -s languages.toml "$HOME/.config/helix/languages.toml"
-
-# install vim plugins
-nvim +'PlugInstall' +qa
 
 # install programming languages and associated tools
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 sudo apt-get install python3.12-venv python3.12-dev
-sudo apt-get install nvm
 
 mkdir "$HOME/.venv"
 python -m venv "$HOME/.venv/base"
@@ -43,4 +34,17 @@ python -m venv "$HOME/.venv/base"
 # ruff
 # markdown-oxide
 # rust-analyzer
-# helix
+
+cargo install sd --locked
+cargo install ast-grep --locked
+cargo install eza --locked
+cargo install bat --locked
+cargo install fzf --locked
+cargo install ripgrep --locked
+cargo install zellij --locked
+cargo install zoxied --locked
+
+git clone https://github.com/helix-editor/helix ~/src/helix
+cargo install --path ~/src/helix/helix-term --locked
+
+# TODO: fonts

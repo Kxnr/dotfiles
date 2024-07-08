@@ -1,9 +1,7 @@
 [[language]]
 name = "python"
+# TODO: use pylyzer once it's able to import packages
 language-servers = [ "pyright", "ruff" ]
-
-# [language-server.pyright.config.python.analysis]
-# typeCheckingMode = "basic"
 
 [language-server.ruff]
 command = "ruff-lsp"

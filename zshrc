@@ -94,7 +94,7 @@ function search {
     --delimiter : \
     --header '╱ CTRL-R (ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
       --bind='tab:toggle-preview' \
-      --preview 'bat --color=always {1}' \
+      --preview 'batcat --color=always {1}' \
       --preview-window 'right,60%,border-bottom,+{2}+3/3,~3' \
       --bind 'enter:become(hx {1}:{2})'
 }
