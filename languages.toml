@@ -1,7 +1,17 @@
 [[language]]
 name = "python"
+auto-format = true
 # TODO: use pylyzer once it's able to import packages
-language-servers = [ "pyright", "ruff" ]
+# language-servers = ["ruff", "typos", "basedpyright"]
+language-servers = ["ruff", "typos", "pylyzer"]
+
+[[language]]
+name = "markdown"
+auto-format = true
+language-servers = ["typos", "markdown-oxide"]
 
 [language-server.ruff]
 command = "ruff-lsp"
+
+[language-server.typos]
+command = "typos-lsp"

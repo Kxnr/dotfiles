@@ -41,31 +41,24 @@ fi
 alias ls="exa"
 alias cat="batcat"
 alias find="fdfind"
-alias z="zoxide"
+alias fix="git diff --name-only | uniq | xargs $EDITOR"
+alias tree="exa --tree --color always | cat"
 
 function venv {
   source "$HOME/.venv/$1/bin/activate"
 }
 
 
-function v  {
-  ADD_PATHS=($VIRTUAL_ENV/lib/*/site-packages)
-  ADD_PATHS+=($PYTHONPATH)
-  BEFORE="$PYTHONPATH"
-  PYTHONPATH=${(j{:})ADD_PATHS}
-  nvim $@
-  PYTHONPATH="$BEFORE"
-}
-
 function wiki {
   hx -w ~/wiki ~/wiki/index.md
 }
 
-function md5-compare-dirs {
+
+function dirs-equal {
   diff <(find $1 -type f -exec md5sum {} + | sort -k 2 | sed 's/ .*\// /') <(find $2 -type f -exec md5sum {} + | sort -k 2 | sed 's/ .*\// /')
 }
 
-function vim-compare-dirs {
+function compare {
   for files in $(diff -rq $1 $2 | grep 'differ$' | sed "s/^Files //g;s/ differ$//g;s/ and /:/g"); do 
     vimdiff ${files%:*} ${files#*:}; 
   done
@@ -73,10 +66,6 @@ function vim-compare-dirs {
 
 function most-recent-tag {
   git pull --tags && git describe --tags $(git rev-list --tags --max-count=5)
-}
-
-function fix {
-  stty sane
 }
 
 function search {
@@ -106,4 +95,5 @@ setopt SHARE_HISTORY
 # HELIX
 # export HELIX_RUNTIME=~/src/helix/runtime
 
+eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
