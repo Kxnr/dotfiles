@@ -44,7 +44,6 @@ cargo install bat --locked
 # cannot be installed from cargo
 # cargo install fzf --locked
 cargo install ripgrep --locked
-# TODO zellij plugins
 cargo install zellij --locked
 cargo install zoxide --locked
 cargo install forgit --locked

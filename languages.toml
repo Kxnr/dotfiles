@@ -2,8 +2,8 @@
 name = "python"
 auto-format = true
 # TODO: use pylyzer once it's able to import packages
-# language-servers = ["ruff", "typos", "basedpyright"]
-language-servers = ["ruff", "typos", "pylyzer"]
+language-servers = ["ruff", "typos", "basedpyright"]
+# language-servers = ["ruff", "typos", "pylyzer"]
 
 [[language]]
 name = "markdown"
