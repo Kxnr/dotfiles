@@ -145,17 +145,18 @@ keybinds clear-defaults=true {
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+        bind "?" { 
+            // help -- tag so that I can search for this command when I forget it ;)
+            LaunchOrFocusPlugin "zjforgot" {
+                floating true
+            }; 
+        }
     }
     shared_except "tmux" "locked" {
         bind "Esc" { SwitchToMode "Tmux"; }
     }
     shared {
         bind "Ctrl Space" { SwitchToMode "Tmux"; }
-        bind "Alt /" { 
-            LaunchOrFocusPlugin "zjforgot" {
-                floating true
-            }; 
-        }
         bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
         bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
         bind "Alt j" "Alt Down" { MoveFocus "Down"; }
