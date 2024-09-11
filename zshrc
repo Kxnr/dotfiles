@@ -1,14 +1,7 @@
-# Use powerline
-USE_POWERLINE="true"
-
 # Source manjaro-zsh-configuration
 if [[ -e /usr/share/zsh/manjaro-zsh-config ]]; then
   source /usr/share/zsh/manjaro-zsh-config
-fi
-
-# Use manjaro zsh prompt
-if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
-  source /usr/share/zsh/manjaro-zsh-prompt
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
@@ -31,12 +24,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 export PATH=$PATH:$(npm config --global get prefix)/bin
 
-# Use base virtual environment
-if [[ -e $HOME/.venv/base/bin/activate ]]; then
-  source $HOME/.venv/base/bin/activate
-fi
-
-
 # replacements for existing commands
 alias ls="exa"
 alias cat="batcat"
@@ -44,24 +31,8 @@ alias find="fdfind"
 alias fix="git diff --name-only | uniq | xargs $EDITOR"
 alias tree="exa --tree --color always | cat"
 
-function venv {
-  source "$HOME/.venv/$1/bin/activate"
-}
-
-
 function wiki {
   hx -w ~/wiki ~/wiki/index.md
-}
-
-
-function dirs-equal {
-  diff <(find $1 -type f -exec md5sum {} + | sort -k 2 | sed 's/ .*\// /') <(find $2 -type f -exec md5sum {} + | sort -k 2 | sed 's/ .*\// /')
-}
-
-function compare {
-  for files in $(diff -rq $1 $2 | grep 'differ$' | sed "s/^Files //g;s/ differ$//g;s/ and /:/g"); do 
-    vimdiff ${files%:*} ${files#*:}; 
-  done
 }
 
 function most-recent-tag {
@@ -95,5 +66,22 @@ setopt SHARE_HISTORY
 # HELIX
 # export HELIX_RUNTIME=~/src/helix/runtime
 
-eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval "$(zoxide init zsh)"
+eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(starship init zsh)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PIPENV_PYTHON="$PYENV_ROOT/shims/python"
+
+plugin=(
+  pyenv
+)
+
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+export PIPX_DEFAULT_PYTHON=$(pyenv which python)
+export PYTHONBREAKPOINT="ipdb.set_trace"

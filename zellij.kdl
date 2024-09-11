@@ -116,7 +116,8 @@ keybinds clear-defaults=true {
         bind "[" { SwitchToMode "Scroll"; }
         // TODO: dedicated horizontal and vertical splits
         bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
-        bind "\\" { NewPane; SwitchToMode "Locked"; }
+        bind "\\" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "Space" { SwitchToMode "Normal"; }
         bind "c" { NewTab; SwitchToMode "Locked"; }
         bind "h" "Left" { MoveFocusOrTab "Left"; SwitchToMode "Locked"; }

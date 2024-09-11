@@ -1,0 +1,26 @@
+# print the contents of the current module
+alias ph pp dir()
+
+# print all attributes of a given object
+alias pd pp dir(%1)
+
+# Print the member variables of self.
+alias ps pd self
+
+# Print the locals.
+alias pl pp locals():
+
+# Print the globals.
+alias pg pp globals():
+
+# Print the type of something
+alias pt print(type(%1))
+
+# Next and list, and step and list.
+alias nl n;;l
+alias sl s;;l
+
+alias save import bdb;;import json;; with open("session.pdb", "w") as f: json.dump([(*k, v.cond) for k, bps in bdb.Breakpoint.bplist.items() for v in bps], f)
+
+# Note: sys.gettrace() is a dirty hack to get the current bdb instance
+alias load import json;; import sys;; with open("session.pdb", "r") as f: [sys.gettrace().__self__.set_break(fn, l, cond=cond) for fn, l, cond in json.load(f)]
