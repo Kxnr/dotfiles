@@ -6,7 +6,9 @@ $os\
 $username\
 [](bg:color_yellow fg:color_orange)\
 $directory\
-[](fg:color_yellow bg:color_aqua)\
+[](fg:color_yellow bg:color_green)\
+$shell\
+[](bg:color_aqua fg:color_green)\
 $git_branch\
 $git_status\
 [](fg:color_aqua bg:color_blue)\
@@ -160,9 +162,17 @@ disabled = false
 
 [character]
 disabled = false
-success_symbol = '[](bold fg:color_green)'
-error_symbol = '[](bold fg:color_red)'
-vimcmd_symbol = '[](bold fg:color_green)'
-vimcmd_replace_one_symbol = '[](bold fg:color_purple)'
-vimcmd_replace_symbol = '[](bold fg:color_purple)'
-vimcmd_visual_symbol = '[](bold fg:color_yellow)'
+success_symbol = '[⟫⟫](bold fg:color_green)'
+error_symbol = '[⟫⟫](bold fg:color_red)'
+vimcmd_symbol = '[⟪⟪](bold fg:color_green)'
+vimcmd_replace_one_symbol = '[⟪⟪](bold fg:color_purple)'
+vimcmd_replace_symbol = '[⟪⟪](bold fg:color_purple)'
+vimcmd_visual_symbol = '[⟪⟪](bold fg:color_yellow)'
+
+[shell]
+style = "bg:green"
+disabled = false
+bash_indicator = "⁕"
+nu_indicator = ">"
+zsh_indicator = "z"
+format = '[[ $indicator ](fg:color_fg0 bg:color_green)]($style)'
