@@ -10,6 +10,10 @@ eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
 eval "$(mise activate zsh)"
 
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
+
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 
 export TERM=xterm-256color

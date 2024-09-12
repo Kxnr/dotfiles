@@ -6,5 +6,6 @@ source ~/.cache/starship/init.nu
 source ~/.cache/atuin/init.nu
 source ~/.cache/zoxide/init.nu
 source ~/.cache/mise/init.nu
+source ~/.cache/carapace/init.nu
 
 # TODO: Add fzf searching
