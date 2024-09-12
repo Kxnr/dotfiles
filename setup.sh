@@ -2,7 +2,6 @@
 curl https://mise.run | sh
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-curl termux.carapace.sh | sh
 
 mkdir ~/.zsh
 git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions

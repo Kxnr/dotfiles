@@ -5,8 +5,6 @@ source $HOME/.zsh/zsh-syntax-highlighting
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 
-zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-source <(carapace _carapace)
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
