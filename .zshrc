@@ -1,35 +1,34 @@
-# Source manjaro-zsh-configuration
-if [[ -e /usr/share/zsh/manjaro-zsh-config ]]; then
-  source /usr/share/zsh/manjaro-zsh-config
-  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
+setopt SHARE_HISTORY
+
+source $HOME/.zsh/zsh-autosuggestions
+source $HOME/.zsh/zsh-syntax-highlighting
+
+export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
+
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
+eval "$(zoxide init zsh)"
+eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(starship init zsh)"
+eval "$(mise activate zsh)"
 
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 
-# NODE
 export TERM=xterm-256color
 
 export GIT_EDITOR=hx
 export VISUAL=hx
 export EDITOR="$VISUAL"
-export PATH="$PATH:$HOME/.local/bin:/snap/bin"
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
 
-export WINHOME="/mnt/c/Users/cak88/"
 export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
 
-# NODE
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export PATH=$PATH:$(npm config --global get prefix)/bin
-
 # replacements for existing commands
-alias ls="exa"
+alias ls="eza"
 alias cat="batcat"
 alias find="fdfind"
 alias fix="git diff --name-only | uniq | xargs $EDITOR"
-alias tree="exa --tree --color always | cat"
+alias tree="ls --tree --color always | cat"
 
 function wiki {
   hx -w ~/wiki ~/wiki/index.md
@@ -60,28 +59,3 @@ function search {
       --bind 'enter:become(hx {1}:{2})'
 }
 
-stty sane
-setopt SHARE_HISTORY
-
-# HELIX
-# export HELIX_RUNTIME=~/src/helix/runtime
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-eval "$(zoxide init zsh)"
-eval "$(atuin init zsh --disable-up-arrow)"
-eval "$(starship init zsh)"
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export PIPENV_PYTHON="$PYENV_ROOT/shims/python"
-
-plugin=(
-  pyenv
-)
-
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-export PIPX_DEFAULT_PYTHON=$(pyenv which python)
-export PYTHONBREAKPOINT="ipdb.set_trace"
