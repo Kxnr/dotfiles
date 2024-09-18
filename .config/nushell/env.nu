@@ -5,7 +5,7 @@ mkdir ~/.cache/starship
 starship init nu | save -f ~/.cache/starship/init.nu
 
 mkdir ~/.cache/atuin
-atuin init nu --disable-up-arrow | save -f ~/.cache/atuin/init.nu
+atuin init nu | save -f ~/.cache/atuin/init.nu
 
 mkdir ~/.cache/zoxide
 zoxide init nushell | save -f ~/.cache/zoxide/init.nu

@@ -1,9 +1,10 @@
 keybinds clear-defaults=true {
-    shared_except "tmux" "locked" {
-        bind "Esc" { SwitchToMode "Tmux"; }
-    }
     shared {
         bind "Ctrl Space" { SwitchToMode "Tmux"; }
+    }
+    shared_except "Locked" {
+        bind "Esc" { SwitchToMode "Locked"; }
+        bind "Enter" { SwitchToMode "Locked"; }
     }
     resize {
         bind "h" "Left" { Resize "Increase Left"; }
@@ -18,10 +19,14 @@ keybinds clear-defaults=true {
         bind "-" { Resize "Decrease"; }
     }
     pane {
-        bind "h" "Left" { MoveFocus "Left"; }
-        bind "l" "Right" { MoveFocus "Right"; }
-        bind "j" "Down" { MoveFocus "Down"; }
-        bind "k" "Up" { MoveFocus "Up"; }
+        bind "h" "Left" { MoveFocus "Left"; SwitchToMode "Locked"; }
+        bind "l" "Right" { MoveFocus "Right"; SwitchToMode "Locked"; }
+        bind "j" "Down" { MoveFocus "Down"; SwitchToMode "Locked"; }
+        bind "k" "Up" { MoveFocus "Up"; SwitchToMode "Locked"; }
+        bind "\\" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
+        bind "s" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "v" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "p" { SwitchFocus; }
         bind "h" "Left" { MoveFocusOrTab "Left"; }
         bind "l" "Right" { MoveFocusOrTab "Right"; }
@@ -91,11 +96,12 @@ keybinds clear-defaults=true {
     }
     tmux {
         bind "Esc" { SwitchToMode "Locked"; }
-        bind "l" {
-            Run "atuin" "search" "-i";
-        }
-        bind "\\" { NewPane "Right"; }
-        bind "-" { NewPane "Down"; }
+        // bind "l" {
+        //     Run "atuin" "search" "-i";
+        // }
+        bind "Space" { ToggleTab; }
+        bind "\\" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "w" { SwitchToMode "Pane"; }
         bind "r" { SwitchToMode "Resize"; }
         bind "/" { SwitchToMode "EnterSearch"; }
@@ -113,7 +119,6 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "Locked"; }
         bind "8" { GoToTab 8; SwitchToMode "Locked"; }
         bind "9" { GoToTab 9; SwitchToMode "Locked"; }
-        bind "Tab" { ToggleTab; }
     }
 }
 

@@ -6,9 +6,10 @@ source $HOME/.zsh/zsh-syntax-highlighting
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 
 eval "$(zoxide init zsh)"
-eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(atuin init zsh)"
 eval "$(starship init zsh)"
 eval "$(mise activate zsh)"
+# TODO: fzf
 
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
