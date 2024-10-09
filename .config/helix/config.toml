@@ -10,6 +10,10 @@ color-modes = true
 cursorline = true
 text-width = 100
 
+[editor.inline-diagnostics]
+cursor-line = "hint"
+other-lines = "error"
+
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
@@ -44,9 +48,9 @@ enable = true
 render = true
 
 [editor.statusline]
-left = ["mode", "spinner"]
-center = ["file-name"]
-right = ["diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type"]
+left = ["mode", "spinner", "file-name"]
+center = []
+right = ["diagnostics", "selections", "position", "position-percentage", "file-encoding", "file-line-ending", "file-type"]
 separator = "│"
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
@@ -54,9 +58,113 @@ mode.select = "SELECT"
 
 [keys.normal.space]
 "space" = "goto_word"
+"n" = ":lsp-workspace-command notebook journal today"
+
+# modifiers meaning:
+# Alt -> destructive modifier. Where there's a command than can optionally make changes or change 
+#        register contents, alt enables the modification behavior
+#           -> is this a smaller example of a broader pattern of alternative behavior?
+#     -> shrink modifier. The same but smaller, opposite of Shift
+# Shift -> reverse modifier. lowercase forwards, uppercase backwards
+#       -> the same but bigger. ie word to WORD
+# Ctrl -> movement modifier. Default interaction is with text (ie next match), ctrl makes these in terms
+#           of cursor or picker movement
 
 [keys.normal]
+"A-w" = "move_next_sub_word_start"
+"A-b" = "move_prev_sub_word_start"
+"A-e" = "move_next_sub_word_end"
+"L" = "goto_line_end"
+"H" = "goto_line_start"
 A-d = "delete_selection"
 d = "delete_selection_noyank"
 A-c = "change_selection"
 c = "change_selection_noyank"
+x = "extend_to_line_bounds"
+X = "extend_line"
+J = "join_selections_space"
+"A-x" = "shrink_to_line_bounds"
+V = ["select_mode", "extend_to_line_end"]
+"." = "repeat_last_motion"
+# there's no repeat_last_insert command, this is accomplished through a code change
+# "A-." = "repeat_last_insert"
+"A-r" = "replace_with_yanked"
+"C-j" = "page_cursor_half_down"
+"C-k" = "page_cursor_half_up"
+# TODO: jumplist movements seem random, but are muscle-memoried pretty well
+"U" = "later"
+"u" = "earlier"
+"+" = "increment"
+"minus" = "decrement"
+"|" = "shell_pipe_to"
+"A-|" = "shell_pipe"
+"A-q" = "record_macro"
+"q" = "replay_macro"
+"'" = "select_register"
+";" = ["keep_primary_selection", "collapse_selection"]
+
+# remove redundant keys/keys that use modifiers differently/unused keys as a simplification. This 
+# breaks compatibility with docs, but trying to standardize and keep compatibility can't both work
+"A-." = "no_op"
+"C-u" = "no_op"
+"C-d" = "no_op"
+"C-s" = "no_op"
+"home" = "no_op"
+"end" = "no_op"
+"C-a" = "no_op"
+"C-x" = "no_op"
+"G" = "no_op"
+"A-`" = "no_op"
+
+# I don't use ! and it doesn't quite fit with the Alt/Shift roles I've described. If
+# I need these, then I'll revisit this change, likely by making | a minor mode
+"!" = "no_op"
+"A-!" = "no_op"
+"Q" = "no_op"
+"S" = "no_op"
+"A-s" = "no_op"
+"A-minus" = "no_op"
+"A-_" = "no_op"
+"&" = "no_op"
+"_" = "no_op"
+"A-;" = "no_op"
+"A-:" = "no_op"
+"A-," = "no_op"
+"C" = "no_op"
+"A-C" = "no_op"
+"(" = "no_op"
+")" = "no_op"
+"A-(" = "no_op"
+"A-)" = "no_op"
+"K" = "no_op"
+"A-K" = "no_op"
+"C-c" = "no_op"
+"A-J" = "no_op"
+"R" = "no_op"
+
+[keys.select]
+# TODO: what of the normal mode bindings do I need to copy in here?
+"A-w" = "extend_next_sub_word_start"
+"A-b" = "extend_prev_sub_word_start"
+"A-e" = "extend_next_sub_word_end"
+
+[keys.normal.s]
+"c" = "copy_selection_on_next_line"
+"C" = "copy_selection_on_prev_line"
+"d" = "remove_primary_selection"
+"D" = "keep_primary_selection"
+"k" = "keep_selections"
+"K" = "remove_selections"
+"s" = "select_regex"
+"S" = "split_selection"
+# TODO: split selection on new line
+"n" = "rotate_selections_forward"
+"N" = "rotate_selections_backward"
+"j" = "save_selection"
+"]" = "select_next_sibling"
+"[" = "select_prev_sibling"
+"{" = "shrink_selection"
+"}" = "expand_selection"
+"~" = "flip_selections"
+"=" = "align_selections"
+

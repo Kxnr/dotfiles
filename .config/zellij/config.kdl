@@ -25,8 +25,8 @@ keybinds clear-defaults=true {
         bind "k" "Up" { MoveFocus "Up"; SwitchToMode "Locked"; }
         bind "\\" { NewPane "Right"; SwitchToMode "Locked"; }
         bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
-        bind "s" { NewPane "Right"; SwitchToMode "Locked"; }
-        bind "v" { NewPane "Down"; SwitchToMode "Locked"; }
+        bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "s" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "p" { SwitchFocus; }
         bind "h" "Left" { MoveFocusOrTab "Left"; }
         bind "l" "Right" { MoveFocusOrTab "Right"; }

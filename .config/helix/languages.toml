@@ -1,17 +1,16 @@
 [[language]]
 name = "python"
 auto-format = true
-# TODO: use pylyzer once it's able to import packages
-language-servers = ["ruff", "typos", "basedpyright"]
-# language-servers = ["ruff", "typos", "pylyzer"]
+# TODO: use pylyzer once it's able to do workspace symbols
+# TODO: ruff might have them beat
+language-servers = ["ruff", "pylsp", "pyright"]
 
 [[language]]
 name = "markdown"
 auto-format = true
-language-servers = ["typos", "markdown-oxide"]
+language-servers = ["markdown-oxide"]
 
 [language-server.ruff]
-command = "ruff-lsp"
+command = "ruff"
+args = ["server"]
 
-[language-server.typos]
-command = "typos-lsp"
