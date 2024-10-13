@@ -10,7 +10,6 @@ eval "$(atuin init zsh)"
 eval "$(starship init zsh)"
 eval "$(mise activate zsh)"
 source ~/.fzf.zsh
-# TODO: fzf
 
 # export CARAPACE_BRIDGES='zsh,bash'
 # zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
