@@ -143,12 +143,9 @@ V = ["select_mode", "extend_to_line_end"]
 "R" = "no_op"
 
 [keys.select]
-# TODO: what of the normal mode bindings do I need to copy in here?
 "A-w" = "extend_next_sub_word_start"
 "A-b" = "extend_prev_sub_word_start"
 "A-e" = "extend_next_sub_word_end"
-
-[keys.normal.s]
 "c" = "copy_selection_on_next_line"
 "C" = "copy_selection_on_prev_line"
 "d" = "remove_primary_selection"
