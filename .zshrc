@@ -1,7 +1,7 @@
 setopt SHARE_HISTORY
 
-source $HOME/.zsh/zsh-autosuggestions
-source $HOME/.zsh/zsh-syntax-highlighting
+source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 
