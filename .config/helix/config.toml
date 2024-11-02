@@ -142,18 +142,18 @@ V = ["select_mode", "extend_to_line_end"]
 "A-J" = "no_op"
 "R" = "no_op"
 
-[keys.select]
+[keys.select.space]
 "A-w" = "extend_next_sub_word_start"
 "A-b" = "extend_prev_sub_word_start"
 "A-e" = "extend_next_sub_word_end"
 "c" = "copy_selection_on_next_line"
 "C" = "copy_selection_on_prev_line"
-"d" = "remove_primary_selection"
-"D" = "keep_primary_selection"
-"k" = "keep_selections"
-"K" = "remove_selections"
-"s" = "select_regex"
-"S" = "split_selection"
+"d" = "remove_selections"
+"D" = "remove_primary_selection"
+"p" = "keep_selections"
+"P" = "keep_primary_selection"
+"/" = "select_regex"
+"\\" = "split_selection"
 # TODO: split selection on new line
 "n" = "rotate_selections_forward"
 "N" = "rotate_selections_backward"

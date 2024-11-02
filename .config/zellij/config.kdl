@@ -5,7 +5,8 @@ keybinds clear-defaults=true {
     shared_except "Locked" {
         bind "Esc" { SwitchToMode "Locked"; }
         bind "Enter" { SwitchToMode "Locked"; }
-    }
+        bind "n" {SwitchToMode "Normal"; }
+     }
     resize {
         bind "h" "Left" { Resize "Increase Left"; }
         bind "j" "Down" { Resize "Increase Down"; }
@@ -19,19 +20,19 @@ keybinds clear-defaults=true {
         bind "-" { Resize "Decrease"; }
     }
     pane {
-        bind "h" "Left" { MoveFocus "Left"; SwitchToMode "Locked"; }
-        bind "l" "Right" { MoveFocus "Right"; SwitchToMode "Locked"; }
-        bind "j" "Down" { MoveFocus "Down"; SwitchToMode "Locked"; }
-        bind "k" "Up" { MoveFocus "Up"; SwitchToMode "Locked"; }
+        bind "Left" { MoveFocus "Left"; }
+        bind "Right" { MoveFocus "Right"; }
+        bind "Down" { MoveFocus "Down"; }
+        bind "Up" { MoveFocus "Up"; }
+        bind "h" { MoveFocus "Left"; SwitchToMode "Locked"; }
+        bind "l" { MoveFocus "Right"; SwitchToMode "Locked"; }
+        bind "j" { MoveFocus "Down"; SwitchToMode "Locked"; }
+        bind "k" { MoveFocus "Up"; SwitchToMode "Locked"; }
         bind "\\" { NewPane "Right"; SwitchToMode "Locked"; }
         bind "-" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
         bind "s" { NewPane "Down"; SwitchToMode "Locked"; }
         bind "p" { SwitchFocus; }
-        bind "h" "Left" { MoveFocusOrTab "Left"; }
-        bind "l" "Right" { MoveFocusOrTab "Right"; }
-        bind "j" "Down" { MoveFocus "Down"; }
-        bind "k" "Up" { MoveFocus "Up"; }
         bind "x" { CloseFocus; SwitchToMode "Locked"; }
         bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0; }
     }
