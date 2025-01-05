@@ -5,11 +5,11 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 
+eval "$(mise activate zsh)"
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 eval "$(starship init zsh)"
-eval "$(mise activate zsh)"
-source ~/.fzf.zsh
+eval "$(fzf --zsh)"
 
 # export CARAPACE_BRIDGES='zsh,bash'
 # zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
@@ -20,8 +20,9 @@ export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 export TERM=xterm-256color
 
 export GIT_EDITOR=hx
-export VISUAL=hx
+export VISUAL="$(which hx)"
 export EDITOR="$VISUAL"
+export SUDO_EDITOR="$VISUAL"
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
 
 export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
@@ -62,3 +63,5 @@ function search {
       --bind 'enter:become(hx {1}:{2})'
 }
 
+
+. "$HOME/.atuin/bin/env"
