@@ -14,3 +14,8 @@ language-servers = ["markdown-oxide"]
 command = "ruff"
 args = ["server"]
 
+[[language]]
+name = "racket"
+auto-format = true
+formatter = { command = "raco", args = ["fmt", "--width", "100"]}
+
