@@ -16,6 +16,6 @@ args = ["server"]
 
 [[language]]
 name = "racket"
-auto-format = true
+auto-format = false
 formatter = { command = "raco", args = ["fmt", "--width", "100"]}
 
