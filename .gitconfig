@@ -1,0 +1,44 @@
+[user]
+  email = ckeane@ascendanalytics.com
+  name = Connor Keane
+
+[pull]
+  rebase = false
+
+[core]
+  editor = vim
+
+[push]
+  default = current
+  autoSetupRemote = true
+
+[core]
+  pager = delta
+  excludesFile = ~/.gitignore
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  navigate = true    # use n and N to move between diff sections
+  side-by-side = true
+  line-numbers = true
+
+[diff]
+  colorMoved = default
+
+[init]
+	defaultBranch = main
+
+[alias]
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<<%an>>%Creset' --abbrev-commit --date=relative
+  cm = commit -m
+  undo = reset HEAD~1 --mixed
+  aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
+[merge]
+    tool = meld
+
+[mergetool "meld"]
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+    # cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
