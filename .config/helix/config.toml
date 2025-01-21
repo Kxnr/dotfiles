@@ -143,18 +143,18 @@ V = ["select_mode", "extend_to_line_end"]
 "A-J" = "no_op"
 "R" = "no_op"
 
-[keys.select."space"]
+[keys.select.space]
 "A-w" = "extend_next_sub_word_start"
 "A-b" = "extend_prev_sub_word_start"
 "A-e" = "extend_next_sub_word_end"
 "c" = "copy_selection_on_next_line"
 "C" = "copy_selection_on_prev_line"
-"d" = "remove_primary_selection"
-"D" = "keep_primary_selection"
 "k" = "keep_selections"
-"K" = "remove_selections"
+"K" = "keep_primary_selection"
 "s" = "select_regex"
 "S" = "split_selection"
+"d" = "remove_selections"
+"D" = "remove_primary_selection"
 "n" = "rotate_selections_forward"
 "N" = "rotate_selections_backward"
 "j" = "save_selection"
@@ -180,5 +180,4 @@ V = ["select_mode", "extend_to_line_end"]
 "y" = "no_op"
 "Y" = "no_op"
 "r" = "no_op"
-"/" = "no_op"
 

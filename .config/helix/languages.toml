@@ -3,8 +3,8 @@ name = "python"
 auto-format = true
 # TODO: use pylyzer once it's able to do workspace symbols
 # TODO: ruff might have them beat
-# language-servers = ["ruff", "ts-python", "pyright"]
-language-servers = ["ruff", "pylsp", "basedpyright"]
+# language-servers = ["ruff", "ts-python", "basedpyright"]
+language-servers = ["ruff", "basedpyright"]
 # language-servers = ["ts-python"]
 # language-servers = ["ruff", "pylyzer"]
 
@@ -12,6 +12,7 @@ language-servers = ["ruff", "pylsp", "basedpyright"]
 name = "markdown"
 auto-format = true
 language-servers = ["markdown-oxide"]
+
 
 [language-server.ruff]
 command = "ruff"
@@ -21,3 +22,10 @@ args = ["server"]
 [language-server.ts-python]
 command = "tree-sitter-stack-graphs"
 args = ["lsp", "--tsg", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/stack-graphs.tsg", "--builtins", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/builtins.py", "--grammar", "/home/kxnr/.config/helix/runtime/grammars/sources/python"]
+
+
+[[language]]
+name = "racket"
+auto-format = false
+formatter = { command = "raco", args = ["fmt", "--width", "100"]}
+
