@@ -92,6 +92,7 @@ V = ["select_mode", "extend_to_line_end"]
 "C-j" = "page_cursor_half_down"
 "C-k" = "page_cursor_half_up"
 # TODO: jumplist movements seem random, but are muscle-memoried pretty well
+# TODO: fast save history, save jump
 "U" = "later"
 "u" = "earlier"
 "+" = "increment"
@@ -142,7 +143,7 @@ V = ["select_mode", "extend_to_line_end"]
 "A-J" = "no_op"
 "R" = "no_op"
 
-[keys.select]
+[keys.select."space"]
 "A-w" = "extend_next_sub_word_start"
 "A-b" = "extend_prev_sub_word_start"
 "A-e" = "extend_next_sub_word_end"
@@ -154,7 +155,6 @@ V = ["select_mode", "extend_to_line_end"]
 "K" = "remove_selections"
 "s" = "select_regex"
 "S" = "split_selection"
-# TODO: split selection on new line
 "n" = "rotate_selections_forward"
 "N" = "rotate_selections_backward"
 "j" = "save_selection"
@@ -162,6 +162,23 @@ V = ["select_mode", "extend_to_line_end"]
 "[" = "select_prev_sibling"
 "{" = "shrink_selection"
 "}" = "expand_selection"
+";" = "collapse_selection"
 "~" = "flip_selections"
 "=" = "align_selections"
+
+"f" = "no_op"
+"F" = "no_op"
+"b" = "no_op"
+"g" = "no_op"
+"G" = "no_op"
+"a" = "no_op"
+"h" = "no_op"
+"'" = "no_op"
+"w" = "no_op"
+"p" = "no_op"
+"P" = "no_op"
+"y" = "no_op"
+"Y" = "no_op"
+"r" = "no_op"
+"/" = "no_op"
 

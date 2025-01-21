@@ -8,10 +8,10 @@ alias pd pp dir(%1)
 alias ps pd self
 
 # Print the locals.
-alias pl pp locals():
+alias pl pp locals()
 
 # Print the globals.
-alias pg pp globals():
+alias pg pp globals()
 
 # Print the type of something
 alias pt print(type(%1))
