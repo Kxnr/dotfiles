@@ -2,19 +2,30 @@
   email = ckeane@ascendanalytics.com
   name = Connor Keane
 
+[column]
+  ui = auto
+
+[branch]
+  sort = -committerdate
+
+[tag]
+  sort = version:refname
+
+[init]
+	defaultBranch = main
+
 [pull]
-  rebase = false
+  rebase = true
 
 [core]
-  editor = vim
+  editor = hx
+  pager = delta
+  excludesfile = ~/.gitignore
 
 [push]
   default = current
   autoSetupRemote = true
-
-[core]
-  pager = delta
-  excludesFile = ~/.gitignore
+  followTags = true
 
 [interactive]
   diffFilter = delta --color-only
@@ -25,19 +36,43 @@
   line-numbers = true
 
 [diff]
+  algorithm = histogram
   colorMoved = default
+  mnemonicPrefix = true
+  renames = true
 
-[init]
-	defaultBranch = main
+[fetch]
+  prune = true
+  pruneTags = true
+  all = true
+
+[help]
+        autocorrect = prompt
+
+[commit]
+        verbose = true
+
+[rerere]
+        enabled = true
+        autoupdate = true
+
+[rebase]
+        autoSquash = true
+        autoStash = true
+        updateRefs = true
 
 [alias]
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<<%an>>%Creset' --abbrev-commit --date=relative
   cm = commit -m
   undo = reset HEAD~1 --mixed
+  tree = log --pretty=better-oneline --all --graph --date=short
+  go  = checkout
+  gob = checkout -b
   aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
 [merge]
     tool = meld
+    conflictstyle = zdiff3
 
 [mergetool "meld"]
     cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
