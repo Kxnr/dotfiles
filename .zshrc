@@ -60,6 +60,7 @@ export SUDO_EDITOR="$VISUAL"
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
 
 export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
+export XPRESS="$HOME/src/smartbidder/xpauth_dev.xpr"
 
 # replacements for existing commands
 alias ls="eza"
@@ -99,5 +100,16 @@ function search {
       --bind 'enter:become(hx {1}:{2})'
 }
 
+function review {
+  git fetch --all
+  git checkout $1
+  CHANGED_FILES=("${(f)$(git diff --relative --name-only $1 $(git merge-base $1 main))}")
+  pre-commit run --from-ref origin/main --to-ref HEAD
+  # TODO: pants test
+  # echo "running pyright check"
+  # basedpyright "${CHANGED_FILES[@]}"
+  read -sk '?Press any key to view files.'
 
-# . "$HOME/.atuin/bin/env"
+  $EDITOR "${CHANGED_FILES[@]}"
+  git checkout -
+}

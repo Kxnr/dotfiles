@@ -20,7 +20,7 @@ normal = "block"
 select = "block"
 
 [editor.file-picker]
-hidden = false
+hidden = true
 
 [editor.lsp]
 display-messages = true
