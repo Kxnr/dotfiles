@@ -1,18 +1,36 @@
+[language-server.scls]
+command = "simple-completion-language-server"
+
+
+[language-server.scls.config]
+max_completion_items = 100           # set max completion results len for each group: words, snippets, unicode-input
+feature_words = true                 # enable completion by word
+feature_snippets = true              # enable snippets
+snippets_first = true                # completions will return before snippets by default
+snippets_inline_by_word_tail = false # suggest snippets by WORD tail, for example text `xsq|` become `x^2|` when snippet `sq` has body `^2`
+feature_unicode_input = true        # enable "unicode input"
+feature_paths = false                # enable path completion
+
+# write logs to /tmp/completion.log
+[language-server.scls.environment]
+RUST_LOG = "info,simple-completion-language-server=info"
+LOG_FILE = "/tmp/completion.log"
+
 [[language]]
 name = "python"
 auto-format = true
-# TODO: use pylyzer once it's able to do workspace symbols
-# TODO: ruff might have them beat
-# language-servers = ["ruff", "ts-python", "basedpyright"]
-language-servers = ["ruff", "basedpyright"]
-# language-servers = ["ts-python"]
-# language-servers = ["ruff", "pylyzer"]
+# language-servers = ["scls", ruff", "ts-python", "basedpyright"]
+language-servers = ["scls", "ruff", "basedpyright"]
 
 [[language]]
 name = "markdown"
 auto-format = true
-language-servers = ["markdown-oxide"]
+# TODO: marksman + zk
+language-servers = ["marksman", "zk"]
 
+[language-server.zk]
+command = "zk"
+args = ["lsp"]
 
 [language-server.ruff]
 command = "ruff"
@@ -22,7 +40,6 @@ args = ["server"]
 [language-server.ts-python]
 command = "tree-sitter-stack-graphs"
 args = ["lsp", "--tsg", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/stack-graphs.tsg", "--builtins", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/builtins.py", "--grammar", "/home/kxnr/.config/helix/runtime/grammars/sources/python"]
-
 
 [[language]]
 name = "racket"
