@@ -36,6 +36,7 @@ export LESS=-r
 
 source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+. "$HOME/.atuin/bin/env"
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 
