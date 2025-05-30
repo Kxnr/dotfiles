@@ -48,7 +48,7 @@ enable = true
 render = true
 
 [editor.statusline]
-left = ["mode", "spinner", "file-name"]
+left = ["mode", "spinner", "file-modification-indicator", "file-name"]
 center = []
 right = ["diagnostics", "selections", "position", "position-percentage", "file-encoding", "file-line-ending", "file-type"]
 separator = "│"
