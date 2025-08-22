@@ -12,7 +12,7 @@
   sort = version:refname
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
 
 [pull]
   rebase = true
@@ -36,6 +36,7 @@
   line-numbers = true
 
 [diff]
+  tool = difft
   algorithm = histogram
   colorMoved = default
   mnemonicPrefix = true
@@ -71,9 +72,18 @@
   gob = checkout -b
   aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
-[merge]
-    tool = meld
-    conflictstyle = zdiff3
+[merge "mergiraf"]
+  name = mergiraf
+  conflictStyle = "diff3"
+  driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
 
-[mergetool "meld"]
-    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+[difftool]
+  prompt = false
+  tool = difftastic
+
+[pager]
+  difftool = true
+
+[difftool "difftastic"]
+  # See `man git-difftool` for a description of MERGED, LOCAL and REMOTE.
+  cmd = difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"

@@ -1,5 +1,36 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# includes workable section for current doing status
+# format = """
+# [](color_orange)\
+# $os\
+# $username\
+# [](bg:color_yellow fg:color_orange)\
+# $directory\
+# [](fg:color_yellow bg:color_green)\
+# $shell\
+# [](bg:color_aqua fg:color_green)\
+# $git_branch\
+# $git_status\
+# [](fg:color_aqua bg:color_blue)\
+# $c\
+# $rust\
+# $golang\
+# $nodejs\
+# $php\
+# $java\
+# $kotlin\
+# $haskell\
+# $python\
+# [](fg:color_blue bg:color_bg3)\
+# $docker_context\
+# $conda\
+# [](fg:color_bg3 bg:color_bg1)\
+# $cmd_duration\
+# [ ](fg:color_bg1)\
+# $line_break$custom\
+# $line_break$character"""
+
 format = """
 [](color_orange)\
 $os\
@@ -152,3 +183,8 @@ bash_indicator = "⁕"
 nu_indicator = ">"
 zsh_indicator = "z"
 format = '[[ $indicator ](fg:color_fg0 bg:color_green)]($style)'
+
+[custom.doing]
+command = "cargo run status"
+when = true
+ignore_timeout = true

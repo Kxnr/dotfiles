@@ -1,7 +1,6 @@
 [language-server.scls]
 command = "simple-completion-language-server"
 
-
 [language-server.scls.config]
 max_completion_items = 100           # set max completion results len for each group: words, snippets, unicode-input
 feature_words = true                 # enable completion by word
@@ -16,6 +15,18 @@ feature_paths = false                # enable path completion
 RUST_LOG = "info,simple-completion-language-server=info"
 LOG_FILE = "/tmp/completion.log"
 
+[language-server.zk]
+command = "zk"
+args = ["lsp"]
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.ts-python]
+command = "tree-sitter-stack-graphs"
+args = ["lsp", "--tsg", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/stack-graphs.tsg", "--builtins", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/builtins.py", "--grammar", "/home/kxnr/.config/helix/runtime/grammars/sources/python"]
+
 [[language]]
 name = "python"
 auto-format = true
@@ -25,21 +36,7 @@ language-servers = ["scls", "ruff", "basedpyright"]
 [[language]]
 name = "markdown"
 auto-format = true
-# TODO: marksman + zk
 language-servers = ["marksman", "zk"]
-
-[language-server.zk]
-command = "zk"
-args = ["lsp"]
-
-[language-server.ruff]
-command = "ruff"
-args = ["server"]
-
-
-[language-server.ts-python]
-command = "tree-sitter-stack-graphs"
-args = ["lsp", "--tsg", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/stack-graphs.tsg", "--builtins", "/home/kxnr/.config/tree-sitter/tree-sitter-stack-graphs-python/src/builtins.py", "--grammar", "/home/kxnr/.config/helix/runtime/grammars/sources/python"]
 
 [[language]]
 name = "racket"

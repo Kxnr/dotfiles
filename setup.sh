@@ -96,9 +96,9 @@ install_nerd_font()
 # git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 # git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
 
-# mise use python latest
+# mise use python latest -y
 # mise use racket latest -y
-# mise use node latest -y
+# mise use go latest -y
 # mise use eza -y
 # mise use fzf -y
 # mise use starship -y
@@ -110,15 +110,15 @@ install_nerd_font()
 # mise use pipx -y
 # mise use zellij -y
 # mise use opentofu -y
-
-# pipx install basedpyright
+# mise use gum -y
 
 # mkdir "$HOME/src"
 
-# cargo install --locked --git https://github.com/Kxnr/markdown-oxide.git markdown-oxide
 # cargo install sd --locked
 # cargo install ast-grep --locked
-# cargo install nu
+# cargo install mergiraf
+# cargo install difftastic
+# cargo install delta
 
 # git clone https://github.com/Kxnr/helix ~/src/helix
 # cargo install --path ~/src/helix/helix-term --locked
