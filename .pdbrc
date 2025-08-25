@@ -1,5 +1,5 @@
 # print the contents of the current module
-alias ph pp dir()
+alias pm pp dir()
 
 # print all attributes of a given object
 alias pd pp dir(%1)
@@ -24,3 +24,11 @@ alias save import bdb;;import json;; with open("session.pdb", "w") as f: json.du
 
 # Note: sys.gettrace() is a dirty hack to get the current bdb instance
 alias load import json;; import sys;; with open("session.pdb", "r") as f: [sys.gettrace().__self__.set_break(fn, l, cond=cond) for fn, l, cond in json.load(f)]
+
+alias save_text with open("%1", "w") as f: f.write(%2)
+
+alias save_pickle with open("%1", "w") as f: f.write(%2)
+
+alias load_pickle import pickle;;with open("%1", "rb") as f: %2 = pickle.loads(f)
+
+alias tst import os;;print(os.getenv("PYTEST_CURRENT_TEST"))
