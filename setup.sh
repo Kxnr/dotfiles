@@ -31,7 +31,13 @@ install_rust()
     cargo install delta
 
     git clone https://github.com/Kxnr/helix ~/src/helix
-    cargo install --path ~/src/helix/helix-term --locked
+    cargo install \
+       --profile opt \
+       --config 'build.rustflags="-C target-cpu=native"' \
+       --path $HOME/src/helix/helix-term \
+       --locked
+
+    ln -Tsf $HOME/src/helix/runtime $HOME/.config/helix/runtime
 }
 
 install_atuin()
@@ -41,16 +47,16 @@ install_atuin()
 
 setup_shell()
 {
-  chsh $(which zsh)
+  chsh kxnr --shell $(which zsh)
   mkdir ~/.zsh
   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
-  
 }
 
 install_nerd_font()
 {
   # from https://github.com/ChrisTitusTech/dwm-titus
+  # TODO: install unzip
   FONT_DIR="$HOME/.local/share/fonts"
   FONT_ZIP="$FONT_DIR/FiraCode.zip"
     FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
@@ -111,6 +117,8 @@ install_nerd_font()
 
 }
 
+# TODO: install build-essential
+# TODO: install zed editor
 install_rust
 install_mise
 install_atuin
