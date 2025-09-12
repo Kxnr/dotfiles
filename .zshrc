@@ -66,11 +66,14 @@ export XPRESS="$HOME/src/smartbidder/xpauth_dev.xpr"
 # replacements for existing commands
 alias ls="eza"
 alias cat="batcat"
-alias find="fdfind"
 alias fix="git diff --name-only | uniq | xargs $EDITOR"
 alias tree="ls --tree --color always | cat"
 alias cp="cp -n"
 alias mv="mv -n"
+
+# configuration for zed
+export ZED_ALLOW_EMULATED_GPU=1
+alias zed="WAYLAND_DISPLAY= zed"
 
 function wiki {
   hx -w ~/wiki ~/wiki/index.md
@@ -114,3 +117,27 @@ function review {
   $EDITOR "${CHANGED_FILES[@]}"
   git checkout -
 }
+
+
+function ruff_fix() {
+  # Check if fix codes were provided
+  if [[ -z "$1" ]]; then
+    echo "Usage: ruff_fix <fix_code1,fix_code2,...>"
+    return 1
+  fi
+
+  local fix_codes="$1"
+  local files
+  files=$(git diff --name-only main -- '*.py')
+
+  if [[ -z "$files" ]]; then
+    echo "No Python files changed compared to main."
+    return 0
+  fi
+
+  # Run ruff --fix with specified codes
+  echo "$files" | xargs ruff check --fix --select "$fix_codes"
+}
+
+
+

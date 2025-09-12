@@ -19,10 +19,14 @@ LOG_FILE = "/tmp/completion.log"
 command = "ruff"
 args = ["server"]
 
+[language-server.ty]
+command = "ty"
+args = ["server"]
+
 [[language]]
 name = "python"
 auto-format = true
-language-servers = ["scls", "ruff", "basedpyright"]
+language-servers = ["scls", "ty", "ruff"]
 
 [[language]]
 name = "markdown"

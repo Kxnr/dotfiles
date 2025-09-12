@@ -1,19 +1,41 @@
 #!/bin/sh
 
-install_debian()
+install_mise()
 {
-  echo "installing for debian system"  
-}
-
-install_fedora()
-{
-  echo "installing for debian system"  
-}
-
-install_platform_independent()
-{
-  curl https://sh.rustup.rs -sSf | sh -s -- -y
   curl https://mise.run | sh
+  # TODO: source mise config
+
+  mise use python latest -y
+  mise use racket latest -y
+  mise use go latest -y
+  mise use eza -y
+  mise use fzf -y
+  mise use starship -y
+  mise use lazygit -y
+  mise use ripgrep -y
+  mise use bat -y
+  mise use zoxide -y
+  mise use uv -y
+  mise use zellij -y
+  mise use gum -y
+}
+
+install_rust()
+{
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+    # TODO: source rust config
+    
+    cargo install sd --locked
+    cargo install mergiraf
+    cargo install difftastic
+    cargo install delta
+
+    git clone https://github.com/Kxnr/helix ~/src/helix
+    cargo install --path ~/src/helix/helix-term --locked
+}
+
+install_atuin()
+{
   curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 }
 
@@ -89,39 +111,9 @@ install_nerd_font()
 
 }
 
-# curl https://mise.run | sh
-# curl https://sh.rustup.rs -sSf | sh -s -- -y
-# curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-# mkdir ~/.zsh
-# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
-
-# mise use python latest -y
-# mise use racket latest -y
-# mise use go latest -y
-# mise use eza -y
-# mise use fzf -y
-# mise use starship -y
-# mise use lazygit -y
-# mise use ripgrep -y
-# mise use bat -y
-# mise use zoxide -y
-# mise use uv -y
-# mise use pipx -y
-# mise use zellij -y
-# mise use opentofu -y
-# mise use gum -y
-
-# mkdir "$HOME/src"
-
-# cargo install sd --locked
-# cargo install ast-grep --locked
-# cargo install mergiraf
-# cargo install difftastic
-# cargo install delta
-
-# git clone https://github.com/Kxnr/helix ~/src/helix
-# cargo install --path ~/src/helix/helix-term --locked
-
+install_rust
+install_mise
+install_atuin
 install_nerd_font
+setup_shell
 
