@@ -39,6 +39,7 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 . "$HOME/.atuin/bin/env"
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/bin"
 
 eval "$(mise activate zsh)"
 eval "$(zoxide init zsh)"
@@ -65,7 +66,7 @@ export XPRESS="$HOME/src/smartbidder/xpauth_dev.xpr"
 
 # replacements for existing commands
 alias ls="eza"
-alias cat="batcat"
+alias cat="bat"
 alias fix="git diff --name-only | uniq | xargs $EDITOR"
 alias tree="ls --tree --color always | cat"
 alias cp="cp -n"
