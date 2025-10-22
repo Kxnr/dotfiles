@@ -47,10 +47,6 @@ eval "$(atuin init zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 
-# export CARAPACE_BRIDGES='zsh,bash'
-# zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-# source <(carapace _carapace)
-
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 
 export TERM=xterm-256color
@@ -69,8 +65,9 @@ alias ls="eza"
 alias cat="bat"
 alias fix="git diff --name-only | uniq | xargs $EDITOR"
 alias tree="ls --tree --color always | cat"
-alias cp="cp -n"
-alias mv="mv -n"
+alias rm="rm -I"
+alias cp="cp --update=none"
+alias mv="mv --update=none"
 
 # configuration for zed
 export ZED_ALLOW_EMULATED_GPU=1
@@ -100,7 +97,7 @@ function search {
     --delimiter : \
     --header '╱ CTRL-R (ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
       --bind='tab:toggle-preview' \
-      --preview 'batcat --color=always {1}' \
+      --preview 'bat --color=always {1}' \
       --preview-window 'right,60%,border-bottom,+{2}+3/3,~3' \
       --bind 'enter:become(hx {1}:{2})'
 }
@@ -141,4 +138,8 @@ function ruff_fix() {
 }
 
 
+
+function dot_run() {
+  env $(grep -v '^#' "$1" | xargs -d '\n') ${@[2,-1]} 
+}
 

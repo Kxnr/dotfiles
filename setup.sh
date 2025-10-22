@@ -119,9 +119,9 @@ install_nerd_font()
 
 # TODO: install build-essential
 # TODO: install zed editor
+# TODO: install zellij plugins
 install_rust
 install_mise
 install_atuin
 install_nerd_font
 setup_shell
-

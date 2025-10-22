@@ -23,11 +23,15 @@ args = ["server"]
 command = "ty"
 args = ["server"]
 
+[language-server.pyrefly]
+command = "pyrefly"
+args = ["lsp"]
+
 [[language]]
 name = "python"
 auto-format = true
 # language-servers = ["scls", "ty", "ruff"]
-language-servers = ["ty", "ruff"]
+language-servers = ["pyrefly", "ruff"]
 
 [[language]]
 name = "markdown"
