@@ -59,9 +59,6 @@ mode.select = "SELECT"
 [keys.normal.space]
 "space" = "goto_word"
 
-# TODO: wiki cmds in separate namespace
-"n" = ":lsp-workspace-command zk.new -g journal"
-
 [keys.normal.space.i]
 c = ":toggle inline-diagnostics.cursor-line hint disable"
 e = ":toggle end-of-line-diagnostics warning disable"
@@ -82,6 +79,15 @@ o = ":toggle inline-diagnostics.other-lines error disable"
 # TODO: comma is underused
 
 [keys.normal]
+# TODO: open commits from blame, use xargs with -L /regex/ to get blame for selection
+C-g = [
+    ":write-all", 
+    ":new", 
+    ":insert-output lazygit", 
+    ":buffer-close!", 
+    ":redraw", 
+    ":reload-all"
+]
 A-w = "move_next_sub_word_start"
 A-b = "move_prev_sub_word_start"
 A-e = "move_next_sub_word_end"
@@ -168,8 +174,6 @@ V = ["select_mode", "extend_to_line_end"]
 "n" = "rotate_selections_forward"
 "N" = "rotate_selections_backward"
 "C" = "copy_selection_on_prev_line"
-"d" = "remove_selections"
-"D" = "remove_primary_selection"
 x = "extend_to_line_bounds"
 X = "extend_line"
 ";" = "collapse_selection"

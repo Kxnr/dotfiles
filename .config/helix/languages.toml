@@ -19,10 +19,6 @@
 command = "ruff"
 args = ["server"]
 
-[language-server.ty]
-command = "ty"
-args = ["server"]
-
 [language-server.pyrefly]
 command = "pyrefly"
 args = ["lsp"]
@@ -30,8 +26,9 @@ args = ["lsp"]
 [[language]]
 name = "python"
 auto-format = true
+roots = ["pyproject.toml"]
 # language-servers = ["scls", "ty", "ruff"]
-language-servers = ["pyrefly", "ruff"]
+language-servers = ["pyrefly", {name = "ruff", except-features = ["document-symbols", "workspace-symbols"]}]
 
 [[language]]
 name = "markdown"
