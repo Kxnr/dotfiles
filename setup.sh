@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 info() { echo "ℹ  $*"; }
@@ -113,7 +113,7 @@ install_rust() {
     cargo install sd --locked
     cargo install mergiraf --locked
     cargo install difftastic --locked
-    cargo install delta --locked
+    cargo install git-delta --locked
 
     success "Cargo tools installed"
 
@@ -122,7 +122,7 @@ install_rust() {
     else
         info "Cloning and building helix..."
         mkdir -p "$HOME/src"
-        git clone https://github.com/Kxnr/helix "$HOME/src/helix"
+        git clone git@github.com:kxnr/helix "$HOME/src/helix"
     fi
 
     info "Building helix (this may take a while)..."
@@ -219,16 +219,16 @@ setup_shell() {
 
 install_nerd_font() {
     FONT_DIR="$HOME/.local/share/fonts"
-    FONT_ZIP="$FONT_DIR/FiraCode.zip"
-    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
-    FONT_INSTALLED=$(fc-list | grep -i "FiraCode" || true)
+    FONT_ZIP="$FONT_DIR/DroidSansMono.zip"
+    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/DroidSansMono.zip"
+    FONT_INSTALLED=$(fc-list | grep -i "DroidSans" || true)
 
     if [ -n "$FONT_INSTALLED" ]; then
-        info "FiraCode Nerd-fonts already installed"
+        info "Nerd-fonts already installed"
         return 0
     fi
 
-    info "Installing FiraCode Nerd-fonts..."
+    info "Installing Nerd-fonts..."
     mkdir -p "$FONT_DIR"
 
     if [ ! -f "$FONT_ZIP" ]; then
@@ -239,7 +239,7 @@ install_nerd_font() {
     rm -f "$FONT_ZIP"
     fc-cache -fv
 
-    success "FiraCode Nerd-fonts installed"
+    success "Nerd-fonts installed"
 }
 
 info "Starting setup..."
