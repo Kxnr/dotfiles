@@ -9,6 +9,9 @@ rulers = [100]
 color-modes = true
 cursorline = true
 text-width = 100
+idle-timeout = 50
+completion-timeout = 50
+
 
 [editor.inline-diagnostics]
 cursor-line = "hint"
