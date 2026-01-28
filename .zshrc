@@ -527,10 +527,14 @@ function cdr() {
   cd "$root" || return 1
 }
 
-function zshrc() {
-  "$EDITOR" "$HOME/.zshrc"
+function zource {
+  source ~/.zshrc
 }
 
+function zshrc() {
+  "$EDITOR" "$HOME/.zshrc"
+  zource
+}
 
 function sb-worktree() {
   local worktree_name="$1"
@@ -596,74 +600,83 @@ function sb-worktree() {
   fi
 
   print_success "Worktree created: $worktree_path"
+  cd "$worktree_path" || return 1
+  
+  print_info "Run 'sb-worktree-init' to set up the development environment"
+}
 
-  # Change to worktree directory
-  cd "$worktree_path" || {
-    print_error "Failed to change to worktree directory"
+function sb-worktree-init() {
+  if ! in_git_repo; then
+    print_error "Not in a git repository"
     return 1
-  }
-
-  # Setup pyrefly configuration
-  if [[ -f "${repo_root}/pyrefly.toml" ]]; then
-    cp "${repo_root}/pyrefly.toml" pyrefly.toml
-    print_success "Copied pyrefly.toml"
   fi
 
-  # Setup job_schedules environment
-  local job_schedules_dir="./src/projects/python/job_schedules"
-  print_info "Setting up job_schedules environment..."
-  
-  # Copy mise config
-  cp "${repo_root}/${job_schedules_dir}/.mise.toml" "${job_schedules_dir}/.mise.toml"
-  print_success "Copied job_schedules .mise.toml"
-  
-  # Setup venv and install dependencies
+  # Get the main repository path (not the worktree)
+  local main_repo
+  main_repo="$(git worktree list --porcelain | awk '/^worktree/ {print $2; exit}')"
+  local worktree_path="$(pwd)"
+
+  print_info "Initializing development environment..."
+
+  # Copy pyrefly configuration
+  if [[ ! -f "${main_repo}/pyrefly.toml" ]]; then
+    print_error "pyrefly.toml not found in ${main_repo}"
+    return 1
+  fi
+  cp "${main_repo}/pyrefly.toml" pyrefly.toml
+  print_success "Copied pyrefly.toml"
+
+  # Setup root environment
+  print_info "Setting up root environment..."
   (
-    cd "$job_schedules_dir" || return 1
+    cd "${worktree_path}" || return 1
     
-    mise trust && mise install
+    cp "${main_repo}/.mise.toml" .mise.toml
+    print_success "Copied root .mise.toml"
+    
+    mise trust
+    mise use python@3.10
+    uv venv --python 3.10
+    print_success "Created root venv"
     
     # Export pants environment
-    gum spin --spinner dot --title "Exporting job_schedules environment..." -- \
-      pants export --resolve=job_schedules
+    gum spin --spinner dot --title "Exporting root environment..." -- \
+      pants export
 
     # Activate and install editable libs
-    if [[ -f ".venv/bin/activate" ]]; then
-      source .venv/bin/activate
-      
-      # Install editable libs
-      gum spin --spinner dot --title "Installing editable libs for job_schedules..." -- \
-        bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
-      
-      deactivate
-      print_success "Job schedules environment setup complete"
-    else
-      print_warning "job_schedules venv not found"
-    fi
+    source .venv/bin/activate
+    
+    # Install editable libs
+    gum spin --spinner dot --title "Installing editable libs for root..." -- \
+      bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
+    
+    deactivate
+    print_success "Root environment setup complete"
   )
 
   # Setup api environment
   local api_dir="./src/projects/python/api"
-    print_info "Setting up api environment..."
-    
-    # Copy mise config
-    if [[ -f "${repo_root}/${api_dir}/.mise.toml" ]]; then
-      cp "${repo_root}/${api_dir}/.mise.toml" "${api_dir}/.mise.toml"
-      print_success "Copied api .mise.toml"
-    fi
-    
-    # Setup venv and install dependencies
+  if [[ ! -d "$api_dir" ]]; then
+    print_error "API directory not found: $api_dir"
+    return 1
+  fi
+  
+  print_info "Setting up api environment..."
   (
     cd "$api_dir" || return 1
     
-    mise trust && mise install
+    cp "${main_repo}/${api_dir}/.mise.toml" .mise.toml
+    print_success "Copied api .mise.toml"
     
-    # Export pants environment
-    gum spin --spinner dot --title "Exporting api environment..." -- \
-      pants export --resolve=api
-    
-    # Activate and install editable libs
-    if [[ -f ".venv/bin/activate" ]]; then
+      mise trust
+      mise use python@3.10
+      uv venv --python 3.10
+      print_success "Created api venv"
+      
+      # Export pants environment
+      gum spin --spinner dot --title "Exporting api environment..." -- \
+        pants export --resolve=api
+      
       source .venv/bin/activate
       
       # Install editable libs
@@ -672,12 +685,9 @@ function sb-worktree() {
       
       deactivate
       print_success "API environment setup complete"
-    else
-      print_warning "api venv not found"
-    fi
   )
 
-  print_success "Worktree setup complete!"
+  print_success "Development environment initialized!"
   print_info "Worktree location: $worktree_path"
   print_info "Branch: $(git_current_branch)"
 }
@@ -793,6 +803,3 @@ function sb-worktree-remove() {
   fi
 }
 
-function zource {
-  source ~/.zshrc
-}
