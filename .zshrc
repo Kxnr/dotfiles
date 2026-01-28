@@ -575,6 +575,7 @@ function sb-worktree() {
   if git show-ref --verify --quiet "refs/heads/$worktree_name"; then
     branch_exists=true
     print_info "Branch exists locally: $worktree_name"
+  fi
 
   # Create worktree (either checkout existing branch or create new one)
   if $branch_exists; then
@@ -610,44 +611,39 @@ function sb-worktree() {
 
   # Setup job_schedules environment
   local job_schedules_dir="./src/projects/python/job_schedules"
-  if [[ -d "$job_schedules_dir" ]]; then
-    print_info "Setting up job_schedules environment..."
+  print_info "Setting up job_schedules environment..."
+  
+  # Copy mise config
+  cp "${repo_root}/${job_schedules_dir}/.mise.toml" "${job_schedules_dir}/.mise.toml"
+  print_success "Copied job_schedules .mise.toml"
+  
+  # Setup venv and install dependencies
+  (
+    cd "$job_schedules_dir" || return 1
     
-    # Copy mise config
-    if [[ -f "${repo_root}/${job_schedules_dir}/.mise.toml" ]]; then
-      cp "${repo_root}/${job_schedules_dir}/.mise.toml" "${job_schedules_dir}/.mise.toml"
-      print_success "Copied job_schedules .mise.toml"
-    fi
+    mise trust && mise install
     
-    # Setup venv and install dependencies
-    (
-      cd "$job_schedules_dir" || return 1
-      
-      mise trust && mise install
-      
-      # Export pants environment
-      gum spin --spinner dot --title "Exporting job_schedules environment..." -- \
-        pants export --resolve=job_schedules
+    # Export pants environment
+    gum spin --spinner dot --title "Exporting job_schedules environment..." -- \
+      pants export --resolve=job_schedules
 
-      # Activate and install editable libs
-      if [[ -f ".venv/bin/activate" ]]; then
-        source .venv/bin/activate
-        
-        # Install editable libs
-        gum spin --spinner dot --title "Installing editable libs for job_schedules..." -- \
-          bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
-        
-        deactivate
-        print_success "Job schedules environment setup complete"
-      else
-        print_warning "job_schedules venv not found"
-      fi
-    )
-  fi
+    # Activate and install editable libs
+    if [[ -f ".venv/bin/activate" ]]; then
+      source .venv/bin/activate
+      
+      # Install editable libs
+      gum spin --spinner dot --title "Installing editable libs for job_schedules..." -- \
+        bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
+      
+      deactivate
+      print_success "Job schedules environment setup complete"
+    else
+      print_warning "job_schedules venv not found"
+    fi
+  )
 
   # Setup api environment
   local api_dir="./src/projects/python/api"
-  if [[ -d "$api_dir" ]]; then
     print_info "Setting up api environment..."
     
     # Copy mise config
@@ -657,30 +653,29 @@ function sb-worktree() {
     fi
     
     # Setup venv and install dependencies
-    (
-      cd "$api_dir" || return 1
+  (
+    cd "$api_dir" || return 1
+    
+    mise trust && mise install
+    
+    # Export pants environment
+    gum spin --spinner dot --title "Exporting api environment..." -- \
+      pants export --resolve=api
+    
+    # Activate and install editable libs
+    if [[ -f ".venv/bin/activate" ]]; then
+      source .venv/bin/activate
       
-      mise trust && mise install
+      # Install editable libs
+      gum spin --spinner dot --title "Installing editable libs for api..." -- \
+        bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
       
-      # Export pants environment
-      gum spin --spinner dot --title "Exporting api environment..." -- \
-        pants export --resolve=api
-      
-      # Activate and install editable libs
-      if [[ -f ".venv/bin/activate" ]]; then
-        source .venv/bin/activate
-        
-        # Install editable libs
-        gum spin --spinner dot --title "Installing editable libs for api..." -- \
-          bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
-        
-        deactivate
-        print_success "API environment setup complete"
-      else
-        print_warning "api venv not found"
-      fi
-    )
-  fi
+      deactivate
+      print_success "API environment setup complete"
+    else
+      print_warning "api venv not found"
+    fi
+  )
 
   print_success "Worktree setup complete!"
   print_info "Worktree location: $worktree_path"
@@ -796,4 +791,8 @@ function sb-worktree-remove() {
     print_error "Failed to remove worktree"
     return 1
   fi
+}
+
+function zource {
+  source ~/.zshrc
 }
