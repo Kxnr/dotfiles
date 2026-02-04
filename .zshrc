@@ -60,7 +60,7 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Env Vars
 # =====
 
-export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/libs/flutter_sdk/bin"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/src/zide/bin:$HOME/libs/flutter_sdk/bin:$PATH"
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 export TERM=xterm-256color
 export GIT_EDITOR=hx
@@ -68,7 +68,6 @@ export VISUAL=hx
 export EDITOR=$VISUAL
 export SUDO_EDITOR=$VISUAL
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
-export ZED_ALLOW_EMULATED_GPU=1
 
 export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
 export XPRESS="$HOME/src/smartbidder/xpauth_dev.xpr"
@@ -528,6 +527,279 @@ function cdr() {
   cd "$root" || return 1
 }
 
+function zource {
+  source ~/.zshrc
+}
+
 function zshrc() {
   "$EDITOR" "$HOME/.zshrc"
+  zource
 }
+
+function sb-worktree() {
+  local worktree_name="$1"
+  local base_branch="${2:-main}"
+  
+  if ! in_git_repo; then
+    print_error "Not in a git repository"
+    return 1
+  fi
+
+  local repo_root
+  repo_root="$(git_root)"
+  local project_name="$(basename "$repo_root")"
+  
+  if [[ -z "$worktree_name" ]]; then
+    worktree_name=$(gum input --placeholder "Enter worktree name (e.g., feature/my-feature)")
+    if [[ -z "$worktree_name" ]]; then
+      print_error "Worktree name is required"
+      return 1
+    fi
+  fi
+
+  # Sanitize worktree name for directory (replace / with -)
+  local worktree_dir="${worktree_name//\//-}"
+  local worktree_path="$HOME/worktrees/${project_name}/${worktree_dir}"
+
+  if [[ -d "$worktree_path" ]]; then
+    print_info "Worktree already exists: $worktree_path"
+    cd "$worktree_path" || return 1
+    print_success "Switched to existing worktree"
+    return 0
+  fi
+
+  # Create new worktree
+  print_info "Creating new worktree: $worktree_name"
+  
+  # Ensure worktrees directory exists
+  mkdir -p "$HOME/worktrees/${project_name}"
+  
+  # Check if branch already exists locally or remotely
+  local branch_exists=false
+  if git show-ref --verify --quiet "refs/heads/$worktree_name"; then
+    branch_exists=true
+    print_info "Branch exists locally: $worktree_name"
+  fi
+
+  # Create worktree (either checkout existing branch or create new one)
+  if $branch_exists; then
+    gum spin --spinner dot --title "Creating worktree from existing branch..." -- \
+      git worktree add "$worktree_path" "$worktree_name"
+    if [[ $? -ne 0 ]]; then
+      print_error "Failed to create worktree from existing branch"
+      return 1
+    fi
+  else
+    print_info "Creating new branch from: $base_branch"
+    gum spin --spinner dot --title "Creating worktree with new branch..." -- \
+      git worktree add -b "$worktree_name" "$worktree_path" "$base_branch"
+    if [[ $? -ne 0 ]]; then
+      print_error "Failed to create worktree with new branch"
+      return 1
+    fi
+  fi
+
+  print_success "Worktree created: $worktree_path"
+  cd "$worktree_path" || return 1
+  
+  print_info "Run 'sb-worktree-init' to set up the development environment"
+}
+
+function sb-worktree-init() {
+  if ! in_git_repo; then
+    print_error "Not in a git repository"
+    return 1
+  fi
+
+  # Get the main repository path (not the worktree)
+  local main_repo
+  main_repo="$(git worktree list --porcelain | awk '/^worktree/ {print $2; exit}')"
+  local worktree_path="$(pwd)"
+
+  print_info "Initializing development environment..."
+
+  # Copy pyrefly configuration
+  if [[ ! -f "${main_repo}/pyrefly.toml" ]]; then
+    print_error "pyrefly.toml not found in ${main_repo}"
+    return 1
+  fi
+  cp "${main_repo}/pyrefly.toml" pyrefly.toml
+  print_success "Copied pyrefly.toml"
+
+  # Setup root environment
+  print_info "Setting up root environment..."
+  (
+    cd "${worktree_path}" || return 1
+    
+    cp "${main_repo}/.mise.toml" .mise.toml
+    print_success "Copied root .mise.toml"
+    
+    mise trust
+    mise use python@3.10
+    uv venv --python 3.10
+    print_success "Created root venv"
+    
+    # Export pants environment
+    gum spin --spinner dot --title "Exporting root environment..." -- \
+      pants export
+
+    # Activate and install editable libs
+    source .venv/bin/activate
+    
+    # Install editable libs
+    gum spin --spinner dot --title "Installing editable libs for root..." -- \
+      bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
+    
+    deactivate
+    print_success "Root environment setup complete"
+  )
+
+  # Setup api environment
+  local api_dir="./src/projects/python/api"
+  if [[ ! -d "$api_dir" ]]; then
+    print_error "API directory not found: $api_dir"
+    return 1
+  fi
+  
+  print_info "Setting up api environment..."
+  (
+    cd "$api_dir" || return 1
+    
+    cp "${main_repo}/${api_dir}/.mise.toml" .mise.toml
+    print_success "Copied api .mise.toml"
+    
+      mise trust
+      mise use python@3.10
+      uv venv --python 3.10
+      print_success "Created api venv"
+      
+      # Export pants environment
+      gum spin --spinner dot --title "Exporting api environment..." -- \
+        pants export --resolve=api
+      
+      source .venv/bin/activate
+      
+      # Install editable libs
+      gum spin --spinner dot --title "Installing editable libs for api..." -- \
+        bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
+      
+      deactivate
+      print_success "API environment setup complete"
+  )
+
+  print_success "Development environment initialized!"
+  print_info "Worktree location: $worktree_path"
+  print_info "Branch: $(git_current_branch)"
+}
+
+function sb-worktree-list() {
+  if ! in_git_repo; then
+    print_error "Not in a git repository"
+    return 1
+  fi
+
+  local repo_root
+  repo_root="$(git_root)"
+  local project_name="$(basename "$repo_root")"
+
+  print_info "Worktrees for project: $project_name"
+  echo
+
+  # Get git worktree list with formatted output
+  git worktree list --porcelain | awk '
+    /^worktree / { path = substr($0, 10); }
+    /^branch / { branch = substr($0, 8); }
+    /^$/ { 
+      if (path && branch) {
+        # Extract just the branch name without refs/heads/
+        sub(/^refs\/heads\//, "", branch);
+        print path " ▸ " branch;
+      }
+      path = ""; branch = ""; 
+    }
+  '
+
+  echo
+  
+  # Count worktrees using git command
+  local count=$(git worktree list | wc -l)
+  print_info "Total worktrees: $count"
+}
+
+function sb-worktree-remove() {
+  local worktree_path="$1"
+  
+  if ! in_git_repo; then
+    print_error "Not in a git repository"
+    return 1
+  fi
+
+  local repo_root
+  repo_root="$(git_root)"
+
+  # If no worktree specified, let user choose
+  if [[ -z "$worktree_path" ]]; then
+    # Get list of worktrees (excluding main worktree)
+    local worktree_list=$(git worktree list --porcelain | awk '
+      /^worktree / { 
+        path = substr($0, 10); 
+        if (path != "'"$repo_root"'") {
+          paths[++n] = path;
+        }
+      }
+      /^branch / { 
+        branch = substr($0, 8);
+        sub(/^refs\/heads\//, "", branch);
+        branches[n] = branch;
+      }
+      END {
+        for (i = 1; i <= n; i++) {
+          print paths[i] " (" branches[i] ")";
+        }
+      }
+    ')
+
+    if [[ -z "$worktree_list" ]]; then
+      print_warning "No worktrees found to remove"
+      return 0
+    fi
+
+    local selected=$(echo "$worktree_list" | gum choose --header "Select worktree to remove")
+    if [[ -z "$selected" ]]; then
+      print_info "No worktree selected"
+      return 0
+    fi
+    
+    # Extract path from selection (remove branch info)
+    worktree_path="${selected% (*}"
+  elif [[ -z "$worktree_path" ]]; then
+    print_error "Usage: sb-worktree-remove <worktree_path>"
+    print_info "Example: sb-worktree-remove ~/worktrees/smartbidder/feature-my-feature"
+    return 1
+  fi
+
+  # Verify worktree exists in git's list
+  if ! git worktree list | grep -q "$worktree_path"; then
+    print_error "Worktree not found: $worktree_path"
+    return 1
+  fi
+
+  # Confirm removal
+  gum confirm "Remove worktree: $worktree_path?" || {
+    print_info "Cancelled"
+    return 0
+  }
+
+  # Remove the worktree
+  print_info "Removing worktree: $(basename "$worktree_path")"
+  gum spin --spinner dot --title "Removing worktree..." -- \
+    git worktree remove "$worktree_path" --force
+
+  if [[ $? -eq 0 ]]; then
+    print_success "Worktree removed: $(basename "$worktree_path")"
+  else
+    print_error "Failed to remove worktree"
+    return 1
+  fi
+}
+

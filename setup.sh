@@ -60,6 +60,7 @@ install_mise() {
     mise use -g uv -y
     mise use -g zellij -y
     mise use -g gum -y
+    mise use -g yazi -y
 
     success "mise tools installed"
 }
@@ -147,6 +148,10 @@ install_atuin() {
     info "Installing atuin..."
     curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
     success "atuin installed"
+}
+
+install_zide() {
+    git clone git@github.com:Kxnr/zide.git ~/src/zide/bin
 }
 
 install_python_tools() {
