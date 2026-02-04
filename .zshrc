@@ -60,7 +60,7 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Env Vars
 # =====
 
-export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/src/zide/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/src/zide/bin:$HOME/libs/flutter_sdk/bin:$PATH"
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 export TERM=xterm-256color
 export GIT_EDITOR=hx
