@@ -67,7 +67,8 @@
   tree = log --pretty=better-oneline --all --graph --date=short
   go  = checkout
   gob = checkout -b
-  aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+  aliases = "git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /"
+  get-all = "!f() { for b in `git branch -r | grep -v -- '->'`; do git branch --track ${b##origin/} $b; done; }; f"
 
 [merge "mergiraf"]
   name = mergiraf

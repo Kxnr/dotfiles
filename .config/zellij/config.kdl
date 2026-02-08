@@ -13,7 +13,6 @@ keybinds clear-defaults=true {
         bind "q" { CloseFocus; SwitchToMode "locked"; }
         bind "s" { NewPane "down"; SwitchToMode "locked"; }
         bind "v" { NewPane "right"; SwitchToMode "locked"; }
-        bind "x" { CloseFocus; SwitchToMode "locked"; }
     }
     tab {
         bind "left" { GoToPreviousTab; }
@@ -25,7 +24,7 @@ keybinds clear-defaults=true {
         bind "k" { GoToPreviousTab; }
         bind "l" { GoToNextTab; }
         bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
-        bind "x" { CloseTab; SwitchToMode "locked"; }
+        bind "q" { CloseTab; SwitchToMode "locked"; }
     }
     resize {
         bind "left" { Resize "Increase left"; }
@@ -55,7 +54,7 @@ keybinds clear-defaults=true {
     }
     scroll {
         bind "e" { EditScrollback; SwitchToMode "locked"; }
-        bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
     }
     search {
         bind "c" { SearchToggleOption "CaseSensitivity"; }
@@ -65,6 +64,7 @@ keybinds clear-defaults=true {
         bind "w" { SearchToggleOption "Wrap"; }
     }
     session {
+        bind "q" { Quit; }
         bind "d" { Detach; }
         bind "w" {
             LaunchOrFocusPlugin "session-manager" {
@@ -124,7 +124,7 @@ keybinds clear-defaults=true {
     }
     tmux {
         bind "space" { ToggleTab; }
-        bind "/" { SwitchToMode "entersearch"; }
+        bind "/" { SwitchToMode "scroll"; }
         bind "1" { GoToTab 1; SwitchToMode "locked"; }
         bind "2" { GoToTab 2; SwitchToMode "locked"; }
         bind "3" { GoToTab 3; SwitchToMode "locked"; }
@@ -134,7 +134,6 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
-        bind "[" { SwitchToMode "scroll"; }
         bind "c" { NewTab; SwitchToMode "locked"; }
         bind "h" { SwitchToMode "move"; }
         bind "r" { SwitchToMode "resize"; }
