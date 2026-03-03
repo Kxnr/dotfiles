@@ -92,8 +92,8 @@ alias ls="eza"
 alias cat="bat"
 alias tree="ls --tree --color always | cat"
 alias rm="rm -I"
-alias cp="cp --update=none"
-alias mv="mv --update=none"
+alias cp="cp -i"
+alias mv="mv -i"
 alias zed="WAYLAND_DISPLAY= zed"
 
 # =====
@@ -128,6 +128,10 @@ function command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
+function directory_exists() {
+  [[ -d "$1" ]]
+}
+
 function file_readable() {
   [[ -f "$1" && -r "$1" ]]
 }
@@ -136,6 +140,17 @@ function file_readable() {
 
 function git_root() {
   git rev-parse --show-toplevel 2>/dev/null
+}
+
+# Returns the path of the main (first) worktree for this repo.
+# Works correctly whether called from the main worktree or any linked worktree.
+function git_main_worktree() {
+  git worktree list --porcelain | head -1 | sed 's/^worktree //'
+}
+
+# Derives a stable project name from the main worktree, not the current directory.
+function git_project_name() {
+  basename "$(git_main_worktree)"
 }
 
 function git_current_branch() {
@@ -536,7 +551,7 @@ function zshrc() {
   zource
 }
 
-function sb-worktree() {
+function worktree() {
   local worktree_name="$1"
   local base_branch="${2:-main}"
   
@@ -545,28 +560,35 @@ function sb-worktree() {
     return 1
   fi
 
-  local repo_root
-  repo_root="$(git_root)"
-  local project_name="$(basename "$repo_root")"
+  local main_worktree
+  main_worktree="$(git_main_worktree)"
+  local project_name="$(git_project_name)"
   
   if [[ -z "$worktree_name" ]]; then
-    worktree_name=$(gum input --placeholder "Enter worktree name (e.g., feature/my-feature)")
+    worktree_name=$(worktree-list | gum choose)
     if [[ -z "$worktree_name" ]]; then
       print_error "Worktree name is required"
       return 1
     fi
   fi
 
-  # Sanitize worktree name for directory (replace / with -)
-  local worktree_dir="${worktree_name//\//-}"
-  local worktree_path="$HOME/worktrees/${project_name}/${worktree_dir}"
+  # Check if a worktree for this branch already exists (using git's own tracking)
+  local existing_path
+  existing_path="$(git worktree list --porcelain | awk -v branch="refs/heads/$worktree_name" '
+    /^worktree / { path = substr($0, 10) }
+    /^branch /   { if (substr($0, 8) == branch) print path }
+  ')"
 
-  if [[ -d "$worktree_path" ]]; then
-    print_info "Worktree already exists: $worktree_path"
-    cd "$worktree_path" || return 1
+  if [[ -n "$existing_path" ]]; then
+    print_info "Worktree already exists: $existing_path"
+    cd "$existing_path" || return 1
     print_success "Switched to existing worktree"
     return 0
   fi
+
+  # Sanitize worktree name for directory (replace / with -)
+  local worktree_dir="${worktree_name//\//-}"
+  local worktree_path="$HOME/worktrees/${project_name}/${worktree_dir}"
 
   # Create new worktree
   print_info "Creating new worktree: $worktree_name"
@@ -611,80 +633,148 @@ function sb-worktree-init() {
     return 1
   fi
 
-  # Get the main repository path (not the worktree)
-  local main_repo
-  main_repo="$(git worktree list --porcelain | awk '/^worktree/ {print $2; exit}')"
   local worktree_path="$(pwd)"
+  local azure_feed_url="https://VssSessionToken@pkgs.dev.azure.com/ascendanalytics/_packaging/AscendFeed_Battery%40Local/pypi/simple/"
 
   print_info "Initializing development environment..."
 
-  # Copy pyrefly configuration
-  if [[ ! -f "${main_repo}/pyrefly.toml" ]]; then
-    print_error "pyrefly.toml not found in ${main_repo}"
-    return 1
-  fi
-  cp "${main_repo}/pyrefly.toml" pyrefly.toml
-  print_success "Copied pyrefly.toml"
+  # Generate pyrefly.toml
+  cat > pyrefly.toml << 'PYREFLY_EOF'
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
+search-path = [
+    'src/projects/python/job_schedules',
+    'src/projects/python/api',
+    'src/projects/python/data_api',
+    'src/projects/python/storage_emulator',
+    'src/projects/python/dev_cli',
+    'src/projects/python/devops',
+    'src/projects/python/pagerduty-summary',
+    'src/libs/python/smartbidder_schemas',
+    'src/libs/python/core_data',
+    'src/libs/python/iso_data',
+    'src/libs/python/azure',
+    'src/libs/python/serialization',
+    'src/libs/python/transformations',
+]
+PYREFLY_EOF
+  print_success "Generated pyrefly.toml"
+
+  # Helper: generate .mise.toml for a directory
+  _sb_write_mise_toml() {
+    cat > .mise.toml << 'MISE_EOF'
+[tools]
+python = "3.10"
+
+[env]
+_.python.venv = { path = ".venv" }
+MISE_EOF
+
+mise trust
+  }
+
+  # Helper: generate uv.toml with Azure Artifacts keyring auth
+  _sb_write_uv_toml() {
+    cat > uv.toml << UV_EOF
+keyring-provider = "subprocess"
+index-strategy = "unsafe-best-match"
+
+[[index]]
+name = "ascend"
+url = "${azure_feed_url}"
+
+UV_EOF
+  }
+
+  # Helper: pick a pants-exported virtualenv directory, using gum when multiple
+  # Python versions are present.
+  # Usage: _sb_pick_venv <virtualenvs/resolve-name dir>
+  # Prints the selected path to stdout; returns non-zero on failure.
+  _sb_pick_venv() {
+    local venv_base="$1"
+    if [[ ! -d "$venv_base" ]]; then
+      print_error "Virtualenv base not found: $venv_base"
+      return 1
+    fi
+
+    local versions=( "${venv_base}"/*(/N) )
+    local chosen
+    printf '%s\n' "${versions[@]}" | gum choose --header "Select Python environment:"
+  }
+
+  # Helper: install editable libs referenced in a pyproject.toml
+  # Must be called from the directory containing the pyproject.toml and .venv
+  _sb_install_editable_libs() {
+    local selected_lines
+    selected_lines=$(grep -oP '.*@ ((\{root:uri\}/)|(file:))\K.*(?=")' pyproject.toml 2>/dev/null)
+    if [[ -n "$selected_lines" ]]; then
+      print_info "Installing editable libs..."
+      while IFS= read -r line; do
+        uv pip install --no-deps -e "$line"
+      done <<< "$selected_lines"
+    fi
+  }
 
   # Setup root environment
   print_info "Setting up root environment..."
   (
     cd "${worktree_path}" || return 1
-    
-    cp "${main_repo}/.mise.toml" .mise.toml
-    print_success "Copied root .mise.toml"
-    
-    mise trust
-    mise use python@3.10
-    uv venv --python 3.10
-    print_success "Created root venv"
-    
-    # Export pants environment
-    gum spin --spinner dot --title "Exporting root environment..." -- \
-      pants export
 
-    # Activate and install editable libs
-    source .venv/bin/activate
-    
-    # Install editable libs
-    gum spin --spinner dot --title "Installing editable libs for root..." -- \
-      bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
-    
-    deactivate
+    _sb_write_mise_toml
+    print_success "Generated root .mise.toml"
+
+    _sb_write_uv_toml
+    print_success "Generated root uv.toml"
+
+    # Export pants environment to dist/
+    pants export --resolve=global
+
+    # link exported venv to expected venv path
+    local global_venv
+    global_venv=$(_sb_pick_venv "${worktree_path}/dist/export/python/virtualenvs/global") || return 1
+    ln -s "${global_venv}" "${worktree_path}/.venv"
+
+    source ${worktree_path}/.venv/bin/activate
+
+    # Install any editable libs referenced in pyproject.toml
+    cd "${worktree_path}/src/projects/python/job_schedules"
+    _sb_install_editable_libs
+
     print_success "Root environment setup complete"
   )
 
   # Setup api environment
-  local api_dir="./src/projects/python/api"
-  if [[ ! -d "$api_dir" ]]; then
-    print_error "API directory not found: $api_dir"
-    return 1
-  fi
-  
+  local api_dir="src/projects/python/api"
+
   print_info "Setting up api environment..."
   (
-    cd "$api_dir" || return 1
-    
-    cp "${main_repo}/${api_dir}/.mise.toml" .mise.toml
-    print_success "Copied api .mise.toml"
-    
-      mise trust
-      mise use python@3.10
-      uv venv --python 3.10
-      print_success "Created api venv"
-      
-      # Export pants environment
-      gum spin --spinner dot --title "Exporting api environment..." -- \
-        pants export --resolve=api
-      
-      source .venv/bin/activate
-      
-      # Install editable libs
-      gum spin --spinner dot --title "Installing editable libs for api..." -- \
-        bash "${worktree_path}/pip_install_libs_as_editable.sh" pyproject.toml
-      
-      deactivate
-      print_success "API environment setup complete"
+    # Export pants api environment from the worktree root (where pants.toml lives)
+    cd "${worktree_path}" || return 1
+    pants export --resolve=projects_api
+
+    # link exported venv to expected venv path
+    local api_venv
+    api_venv=$(_sb_pick_venv "${worktree_path}/dist/export/python/virtualenvs/projects_api") || return 1
+    ln -s "${api_venv}" "${worktree_path}/${api_dir}/.venv"
+
+    # Switch to api dir to set up its .venv
+    cd "${worktree_path}/${api_dir}" || return 1
+    source .venv/bin/activate
+
+    _sb_write_mise_toml
+    print_success "Generated api .mise.toml"
+
+    _sb_write_uv_toml
+    print_success "Generated api uv.toml"
+
+
+    # Install editable libs
+    _sb_install_editable_libs
+
+    print_success "API environment setup complete"
   )
 
   print_success "Development environment initialized!"
@@ -692,15 +782,14 @@ function sb-worktree-init() {
   print_info "Branch: $(git_current_branch)"
 }
 
-function sb-worktree-list() {
+function worktree-list() {
   if ! in_git_repo; then
     print_error "Not in a git repository"
     return 1
   fi
 
-  local repo_root
-  repo_root="$(git_root)"
-  local project_name="$(basename "$repo_root")"
+  local project_name
+  project_name="$(git_project_name)"
 
   print_info "Worktrees for project: $project_name"
   echo
@@ -726,7 +815,7 @@ function sb-worktree-list() {
   print_info "Total worktrees: $count"
 }
 
-function sb-worktree-remove() {
+function worktree-remove() {
   local worktree_path="$1"
   
   if ! in_git_repo; then
@@ -734,8 +823,8 @@ function sb-worktree-remove() {
     return 1
   fi
 
-  local repo_root
-  repo_root="$(git_root)"
+  local main_worktree
+  main_worktree="$(git_main_worktree)"
 
   # If no worktree specified, let user choose
   if [[ -z "$worktree_path" ]]; then
@@ -743,7 +832,7 @@ function sb-worktree-remove() {
     local worktree_list=$(git worktree list --porcelain | awk '
       /^worktree / { 
         path = substr($0, 10); 
-        if (path != "'"$repo_root"'") {
+        if (path != "'"$main_worktree"'") {
           paths[++n] = path;
         }
       }
@@ -773,8 +862,8 @@ function sb-worktree-remove() {
     # Extract path from selection (remove branch info)
     worktree_path="${selected% (*}"
   elif [[ -z "$worktree_path" ]]; then
-    print_error "Usage: sb-worktree-remove <worktree_path>"
-    print_info "Example: sb-worktree-remove ~/worktrees/smartbidder/feature-my-feature"
+    print_error "Usage: worktree-remove <worktree_path>"
+    print_info "Example: worktree-remove ~/worktrees/smartbidder/feature-my-feature"
     return 1
   fi
 
@@ -803,3 +892,20 @@ function sb-worktree-remove() {
   fi
 }
 
+
+function cdp() {
+  if [[ -z "$1" ]]; then
+    print_error "Usage: cdr <project-name>"
+    return 1
+  fi
+
+  local project="$1"
+  local directory="$HOME/src/$project"
+
+  if ! directory_exists $directory; then
+    print_error "No such project: $directory"
+    return 1
+  fi
+  
+  cd "$directory" || return 1
+}
