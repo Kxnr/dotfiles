@@ -565,7 +565,14 @@ function worktree() {
   local project_name="$(git_project_name)"
   
   if [[ -z "$worktree_name" ]]; then
-    worktree_name=$(worktree-list | gum choose)
+    # List only branch names from existing worktrees for the picker
+    worktree_name=$(git worktree list --porcelain | awk '
+      /^branch / {
+        branch = substr($0, 8);
+        sub(/^refs\/heads\//, "", branch);
+        print branch;
+      }
+    ' | gum choose --header "Select worktree branch")
     if [[ -z "$worktree_name" ]]; then
       print_error "Worktree name is required"
       return 1
