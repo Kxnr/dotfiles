@@ -150,10 +150,6 @@ install_atuin() {
     success "atuin installed"
 }
 
-install_zide() {
-    git clone git@github.com:Kxnr/zide.git ~/src/zide/bin
-}
-
 install_python_tools() {
     info "Installing Python tools with uv..."
 
