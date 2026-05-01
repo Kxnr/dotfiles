@@ -80,13 +80,6 @@ install_python_tools() {
         return 1
     fi
 
-    # Install pyright (type checker)
-    if command_exists npm; then
-        npm install -g pyright
-    else
-        info "npm not found, skipping pyright installation"
-    fi
-
     success "Python tools installed"
 }
 
@@ -98,16 +91,6 @@ install_python_tools() {
         mise use -g ruff -y
     else
         info "ruff already installed"
-    fi
-
-    # uv is already installed via mise in install_mise()
-
-    # Install pyrefly (Meta's type checker)
-    if ! command_exists pyrefly; then
-        info "Installing pyrefly via pip..."
-        pip install pyrefly
-    else
-        info "pyrefly already installed"
     fi
 
     success "Python tools installed"
@@ -245,12 +228,12 @@ install_nerd_font() {
     FONT_DIR="$HOME/.local/share/fonts"
     FONT_ZIP="$FONT_DIR/DroidSansMono.zip"
     FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/DroidSansMono.zip"
-    FONT_INSTALLED=$(fc-list | grep -i "DroidSans" || true)
+    # FONT_INSTALLED=$(fc-list | grep -i "DroidSans" || true)
 
-    if [ -n "$FONT_INSTALLED" ]; then
-        info "Nerd-fonts already installed"
-        return 0
-    fi
+    # if [ -n "$FONT_INSTALLED" ]; then
+    #     info "Nerd-fonts already installed"
+    #     return 0
+    # fi
 
     info "Installing Nerd-fonts..."
     mkdir -p "$FONT_DIR"
