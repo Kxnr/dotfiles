@@ -1,19 +1,14 @@
-# [language-server.scls]
-# command = "simple-completion-language-server"
+[language-server.scls]
+command = "simple-completion-language-server"
 
-# [language-server.scls.config]
-# max_completion_items = 100           # set max completion results len for each group: words, snippets, unicode-input
-# feature_words = true                 # enable completion by word
-# feature_snippets = true              # enable snippets
-# snippets_first = true                # completions will return before snippets by default
-# snippets_inline_by_word_tail = false # suggest snippets by WORD tail, for example text `xsq|` become `x^2|` when snippet `sq` has body `^2`
-# feature_unicode_input = true        # enable "unicode input"
-# feature_paths = false                # enable path completion
-
-# # write logs to /tmp/completion.log
-# [language-server.scls.environment]
-# RUST_LOG = "info,simple-completion-language-server=info"
-# LOG_FILE = "/tmp/completion.log"
+[language-server.scls.config]
+max_completion_items = 100
+feature_words = false
+feature_snippets = true
+snippets_first = true
+feature_unicode_input = false
+feature_paths = false
+snippets_global_scope_path = "~/.config/helix/snippets/global.toml"
 
 [language-server.ruff]
 command = "ruff"
@@ -27,19 +22,27 @@ args = ["lsp"]
 command = "ty"
 args = ["server"]
 
+[language-server.pytest-language-server]
+command = "pytest-language-server"
+
 [[language]]
 name = "python"
 auto-format = true
 roots = ["pyproject.toml"]
-language-servers = ["ty", {name = "ruff", except-features = ["document-symbols", "workspace-symbols"]}]
+language-servers = ["ty", {name = "ruff", except-features = ["document-symbols", "workspace-symbols"]}, "scls"]
 
 [[language]]
 name = "markdown"
 auto-format = true
-language-servers = ["marksman"]
+language-servers = ["marksman", "scls"]
+
+[language-server.chicken-lsp-server]
+command = "chicken-lsp-server"
 
 [[language]]
-name = "racket"
-auto-format = false
-formatter = { command = "raco", args = ["fmt", "--width", "100"]}
+name = "scheme"
+language-servers = ["chicken-lsp-server", "scls"]
 
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer", "scls"]

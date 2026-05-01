@@ -47,7 +47,7 @@ install_mise() {
 
     info "Installing tools via mise..."
     mise use -g python@latest -y
-    mise use -g racket@latest -y
+    mise use -g chicken@latest -y
     mise use -g go@latest -y
     mise use -g rust@latest -y
     mise use -g eza -y
@@ -63,6 +63,10 @@ install_mise() {
     mise use -g yazi -y
 
     success "mise tools installed"
+
+    info "Installing chicken-lsp-server egg..."
+    chicken-install -s chicken-lsp-server
+    success "chicken-lsp-server installed"
 }
 
 install_python_tools() {
@@ -115,6 +119,7 @@ install_rust() {
     cargo install mergiraf --locked
     cargo install difftastic --locked
     cargo install git-delta --locked
+    cargo install simple-completion-language-server --locked
 
     success "Cargo tools installed"
 
@@ -136,7 +141,25 @@ install_rust() {
     mkdir -p "$HOME/.config/helix"
     ln -sfn "$HOME/src/helix/runtime" "$HOME/.config/helix/runtime"
 
+    install_helix_dictionary
+
     success "Helix installed"
+}
+
+install_helix_dictionary() {
+    local DICT_DIR="$HOME/src/helix/runtime/dictionaries/en_US"
+    local BASE_URL="https://raw.githubusercontent.com/wooorm/dictionaries/main/dictionaries/en"
+
+    if [ -f "$DICT_DIR/en_US.aff" ] && [ -f "$DICT_DIR/en_US.dic" ]; then
+        info "Helix en_US dictionary already installed, skipping..."
+        return 0
+    fi
+
+    info "Installing en_US hunspell dictionary for Helix spell-checking..."
+    mkdir -p "$DICT_DIR"
+    curl -fsSL "$BASE_URL/index.aff" -o "$DICT_DIR/en_US.aff"
+    curl -fsSL "$BASE_URL/index.dic" -o "$DICT_DIR/en_US.dic"
+    success "Dictionary installed"
 }
 
 install_atuin() {
@@ -252,5 +275,6 @@ install_atuin
 install_python_tools
 install_nerd_font
 setup_shell
+# install_helix_dictionary is called inside install_rust after helix is cloned
 
 success "Setup complete!"
