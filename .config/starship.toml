@@ -154,6 +154,9 @@ nu_indicator = ">"
 zsh_indicator = "z"
 format = '[[ $indicator ](fg:color_fg0 bg:color_green)]($style)'
 
+[custom]
+disabled = false
+
 [custom.workable]
 command = "work"
 when = true

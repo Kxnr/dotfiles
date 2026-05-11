@@ -62,6 +62,7 @@
 [alias]
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<<%an>>%Creset' --abbrev-commit --date=relative
   cm = commit -m
+  ac = commit --amend
   au = add -u
   undo = reset HEAD~1 --mixed
   tree = log --pretty=better-oneline --all --graph --date=short
