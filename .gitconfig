@@ -32,6 +32,8 @@
   side-by-side = true
   line-numbers = true
 
+
+
 [diff]
   tool = difft
   algorithm = histogram
@@ -75,6 +77,9 @@
   name = mergiraf
   conflictStyle = "diff3"
   driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
+
+[merge]
+  conflictStyle = zdiff3
 
 [difftool]
   prompt = false

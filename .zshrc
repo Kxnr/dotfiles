@@ -763,9 +763,17 @@ function sb-worktree-init() {
     return 1
   fi
 
+  local worktree_path
+  worktree_path="$(git_root)"
+  if [[ -z "$worktree_path" ]]; then
+    print_error "Could not determine worktree root"
+    return 1
+  fi
+
+  cd "${worktree_path}" || return 1
+
   pants init
 
-  local worktree_path="$(pwd)"
   local azure_feed_url="https://VssSessionToken@pkgs.dev.azure.com/ascendanalytics/_packaging/AscendFeed_Battery%40Local/pypi/simple/"
 
   print_info "Initializing development environment..."

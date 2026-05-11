@@ -479,21 +479,6 @@ e = ":toggle end-of-line-diagnostics warning disable"
 o = ":toggle inline-diagnostics.other-lines error disable"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Normal: Space → markdown/table commands (space.m)
-# ─────────────────────────────────────────────────────────────────────────────
-
-[keys.normal.space.m]
-a = "align_selections"
-s = "split_selection_on_newline"
-S = "split_selection"
-j = "join_selections_space"
-J = "join_selections"
-r = "select_regex"
-"+" = "increment"
-"-" = "decrement"
-f = "format_selections"
-
-# ─────────────────────────────────────────────────────────────────────────────
 # Normal: Space → debug (space.G)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -565,9 +550,11 @@ v = "vsplit_new"
 # ─────────────────────────────────────────────────────────────────────────────
 
 [keys.normal.","]
-"," = ["ensure_selections_forward", "flip_selections"]
+"," = "ensure_selections_forward"
+space = "keep_selections"
 k = "keep_primary_selection"
 K = "remove_primary_selection"
+d = "remove_selections"
 n = "rotate_selections_forward"
 N = "rotate_selections_backward"
 s = "split_selection"
@@ -645,47 +632,17 @@ j = "extend_line_down"
 w = "extend_to_word"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Select: Space — selection manipulation commands
-# ─────────────────────────────────────────────────────────────────────────────
-
-[keys.select.space]
-n = "rotate_selections_forward"
-N = "rotate_selections_backward"
-c = "copy_selection_on_next_line"
-C = "copy_selection_on_prev_line"
-k = "keep_selections"
-K = "keep_primary_selection"
-s = "select_regex"
-S = "split_selection"
-d = "remove_selections"
-D = "remove_primary_selection"
-j = "save_selection"
-";" = "collapse_selection"
-"~" = "flip_selections"
-"=" = "align_selections"
-space = "split_selection_on_newline"
-f = "no_op"
-F = "no_op"
-b = "no_op"
-e = "no_op"
-E = "no_op"
-g = "no_op"
-a = "no_op"
-"'" = "no_op"
-p = "no_op"
-P = "no_op"
-"/" = "no_op"
-r = "no_op"
-"?" = "no_op"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Select: Selection manipulation minor mode (,) — mirrors normal mode
+# Select: Selection manipulation minor mode (,)
+# Note: select mode does not inherit user-defined normal mode changes,
+# so this must be defined explicitly even though it mirrors normal mode.
 # ─────────────────────────────────────────────────────────────────────────────
 
 [keys.select.","]
-"," = ["ensure_selections_forward", "flip_selections"]
+"," = "ensure_selections_forward"
+space = "keep_selections"
 k = "keep_primary_selection"
 K = "remove_primary_selection"
+d = "remove_selections"
 n = "rotate_selections_forward"
 N = "rotate_selections_backward"
 s = "split_selection"
