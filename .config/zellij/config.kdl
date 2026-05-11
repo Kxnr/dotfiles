@@ -13,6 +13,9 @@ keybinds clear-defaults=true {
         bind "q" { CloseFocus; SwitchToMode "locked"; }
         bind "s" { NewPane "down"; SwitchToMode "locked"; }
         bind "v" { NewPane "right"; SwitchToMode "locked"; }
+        bind "f" { ToggleFocusFullscreen; }
+        bind "space" { FocusNextPane; }
+
     }
     tab {
         bind "left" { GoToPreviousTab; }
