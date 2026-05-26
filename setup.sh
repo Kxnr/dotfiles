@@ -98,11 +98,12 @@ install_python_tools() {
 
 install_rust() {
     info "Installing cargo tools..."
-    cargo install sd --locked
+    cargo install scooter --locked
     cargo install mergiraf --locked
     cargo install difftastic --locked
     cargo install git-delta --locked
     cargo install simple-completion-language-server --locked
+    cargo install ast-grep --locked
 
     success "Cargo tools installed"
 
