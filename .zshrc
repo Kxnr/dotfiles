@@ -94,130 +94,14 @@ alias tree="ls --tree --color always | cat"
 alias rm="rm -I"
 alias cp="cp -i"
 alias mv="mv -i"
-alias sbid="cdp smartbidder"
-alias wt="worktree"
+alias sbid="project cd smartbidder"
+alias wt="project worktree"
+alias pj="project"
+alias bm="project bookmark"
 
 # =====
 # Functions
 # =====
-
-# --- Output ---
-
-function print_success() {
-  gum style --foreground 2 "✓ $*"
-}
-
-function print_error() {
-  gum style --foreground 1 "✗ $*"
-}
-
-function print_info() {
-  gum style --foreground 4 "• $*"
-}
-
-function print_warning() {
-  gum style --foreground 3 "⚠ $*"
-}
-
-# --- Validation ---
-
-function in_git_repo() {
-  git rev-parse --git-dir > /dev/null 2>&1
-}
-
-function command_exists() {
-  command -v "$1" >/dev/null 2>&1
-}
-
-function directory_exists() {
-  [[ -d "$1" ]]
-}
-
-function file_readable() {
-  [[ -f "$1" && -r "$1" ]]
-}
-
-# --- Git ---
-
-function git_root() {
-  git rev-parse --show-toplevel 2>/dev/null
-}
-
-# Returns the path of the main (first) worktree for this repo.
-# Works correctly whether called from the main worktree or any linked worktree.
-function git_main_worktree() {
-  git worktree list --porcelain | head -1 | sed 's/^worktree //'
-}
-
-# Derives a stable project name from the main worktree, not the current directory.
-function git_project_name() {
-  basename "$(git_main_worktree)"
-}
-
-function git_current_branch() {
-  git rev-parse --abbrev-ref HEAD 2>/dev/null
-}
-
-# --- Array Utilities ---
-
-function is_empty_array() {
-  [[ ${#@} -eq 0 ]]
-}
-
-function array_contains() {
-  local search="$1"
-  shift
-  local item
-  for item in "$@"; do
-    [[ "$item" == "$search" ]] && return 0
-  done
-  return 1
-}
-
-function array_join() {
-  local IFS="$1"
-  shift
-  echo "$*"
-}
-
-function array_unique() {
-  # Use zsh's built-in unique flag
-  echo "${(@u)@}"
-}
-
-# Get files changed relative to a branch or tag, optionally matching a pattern
-# Usage: git_changed_files <base_ref> [pattern]
-# Example: git_changed_files main '*.py'
-function git_changed_files() {
-  if [[ -z "$1" ]]; then
-    print_error "Usage: git_changed_files <base_ref> [pattern]"
-    return 1
-  fi
-
-  local base_ref="$1"
-  local pattern="${2:-}"
-
-  if ! in_git_repo; then
-    print_error "Not in a git repository"
-    return 1
-  fi
-
-  # Get the merge base to compare against
-  local merge_base
-  merge_base=$(git merge-base HEAD "$base_ref" 2>/dev/null)
-
-  if [[ -z "$merge_base" ]]; then
-    print_error "Could not find merge base with $base_ref"
-    return 1
-  fi
-
-  # Get changed files, optionally filtering by pattern
-  if [[ -n "$pattern" ]]; then
-    git diff --name-only "$merge_base" HEAD -- "$pattern"
-  else
-    git diff --name-only "$merge_base" HEAD
-  fi
-}
 
 function most-recent-tag {
   if ! in_git_repo; then
@@ -239,36 +123,6 @@ function most-recent-tag {
   fi
 
   echo "$tags"
-}
-
-function search {
-  # Check required commands
-  local required_cmds=(rg fzf bat hx)
-  for cmd in $required_cmds; do
-    if ! command_exists $cmd; then
-      print_error "Required command not found: $cmd"
-      return 1
-    fi
-  done
-
-  rm -f /tmp/rg-fzf-{r,f}
-  RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
-  INITIAL_QUERY="${*:-}"
-  FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-  fzf --ansi \
-    --color "hl:-1:underline,hl+:-1:underline:reverse" \
-    --disabled --query "$INITIAL_QUERY" \
-    --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-    --bind "ctrl-f:unbind(change,ctrl-f)+change-prompt(2. fzf> )+enable-search+rebind(ctrl-r)+transform-query(echo {q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f)" \
-    --bind "ctrl-r:unbind(ctrl-r)+change-prompt(1. ripgrep> )+disable-search+reload($RG_PREFIX {q} || true)+rebind(change,ctrl-f)+transform-query(echo {q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r)" \
-    --bind "start:unbind(ctrl-r)" \
-    --prompt '1. ripgrep> ' \
-    --delimiter : \
-    --header '╱ CTRL-R (ripgrep mode) ╱ CTRL-F (fzf mode) ╱' \
-      --bind='tab:toggle-preview' \
-      --preview 'bat --color=always {1}' \
-      --preview-window 'right,60%,border-bottom,+{2}+3/3,~3' \
-      --bind 'enter:become(hx {1}:{2})'
 }
 
 function review() {
@@ -550,213 +404,6 @@ function zshrc() {
   zource
 }
 
-# --- Git Worktree Management ---
-# Usage: worktree [list|create|switch|remove] [args...]
-# If no subcommand is given, defaults to `switch`.
-# Each subcommand prompts interactively (via gum) when args are omitted.
-
-# List branch names from existing worktrees (one per line).
-# Pass --exclude-main to omit the main worktree's branch.
-function _worktree_branches() {
-  local exclude_main=false
-  [[ "$1" == "--exclude-main" ]] && exclude_main=true
-
-  local main_path=""
-  [[ "$exclude_main" == true ]] && main_path="$(git_main_worktree)"
-
-  git worktree list --porcelain | awk \
-    -v exclude_main="$exclude_main" \
-    -v main_path="$main_path" '
-    /^worktree / { path = substr($0, 10) }
-    /^branch /   {
-      if (exclude_main == "true" && path == main_path) next
-      branch = substr($0, 8)
-      sub(/^refs\/heads\//, "", branch)
-      print branch
-    }
-  '
-}
-
-# Resolve a branch name to its worktree path (empty if none).
-function _worktree_path_for_branch() {
-  git worktree list --porcelain | awk -v branch="refs/heads/$1" '
-    /^worktree / { path = substr($0, 10) }
-    /^branch /   { if (substr($0, 8) == branch) print path }
-  '
-}
-
-function _worktree_switch() {
-  local branch="$1"
-
-  if [[ -z "$branch" ]]; then
-    local branches
-    branches="$(_worktree_branches)"
-    if [[ -z "$branches" ]]; then
-      print_warning "No worktrees found. Use 'worktree create' to make one."
-      return 0
-    fi
-    branch=$(echo "$branches" | gum choose --select-if-one --header "Switch to worktree")
-    [[ -z "$branch" ]] && return 1
-  fi
-
-  local target_path
-  target_path="$(_worktree_path_for_branch "$branch")"
-
-  if [[ -z "$target_path" ]]; then
-    print_error "No worktree found for branch: $branch"
-    print_info "Use 'worktree create $branch' to create one"
-    return 1
-  fi
-
-  cd "$target_path" || return 1
-  print_success "Switched to worktree: $branch ($target_path)"
-}
-
-function _worktree_list() {
-  local project_name
-  project_name="$(git_project_name)"
-
-  print_info "Worktrees for project: $project_name"
-  echo
-
-  git worktree list --porcelain | awk '
-    /^worktree / { path = substr($0, 10) }
-    /^branch /   {
-      branch = substr($0, 8)
-      sub(/^refs\/heads\//, "", branch)
-      print path " ▸ " branch
-    }
-  '
-
-  echo
-  local count=$(git worktree list | wc -l)
-  print_info "Total worktrees: $count"
-}
-
-function _worktree_create() {
-  local branch="$1"
-  local base_branch="${2:-}"
-
-  local project_name
-  project_name="$(git_project_name)"
-
-  if [[ -z "$branch" ]]; then
-    branch=$(gum input --placeholder "feature/my-branch" --header "Branch name for new worktree")
-    [[ -z "$branch" ]] && { print_error "Branch name is required"; return 1; }
-  fi
-
-  # Check if worktree already exists for this branch
-  local existing
-  existing="$(_worktree_path_for_branch "$branch")"
-  if [[ -n "$existing" ]]; then
-    print_warning "Worktree already exists for branch: $branch"
-    print_info "Path: $existing"
-    print_info "Use 'worktree switch $branch' to switch to it"
-    return 1
-  fi
-
-  if [[ -z "$base_branch" ]]; then
-    base_branch=$(gum input --value "main" --header "Base branch")
-    [[ -z "$base_branch" ]] && { print_error "Base branch is required"; return 1; }
-  fi
-
-  local worktree_dir="${branch//\//-}"
-  local worktree_path="$HOME/worktrees/${project_name}/${worktree_dir}"
-
-  mkdir -p "$HOME/worktrees/${project_name}"
-
-  local branch_exists=false
-  git show-ref --verify --quiet "refs/heads/$branch" && branch_exists=true
-
-  if $branch_exists; then
-    print_info "Branch exists locally: $branch"
-    gum spin --spinner dot --title "Creating worktree from existing branch..." -- \
-      git worktree add "$worktree_path" "$branch"
-  else
-    print_info "Creating new branch from: $base_branch"
-    gum spin --spinner dot --title "Creating worktree with new branch..." -- \
-      git worktree add -b "$branch" "$worktree_path" "$base_branch"
-  fi
-
-  if [[ $? -ne 0 ]]; then
-    print_error "Failed to create worktree"
-    return 1
-  fi
-
-  print_success "Worktree created: $worktree_path"
-  cd "$worktree_path" || return 1
-}
-
-function _worktree_remove() {
-  local target="$1"
-  local main_worktree
-  main_worktree="$(git_main_worktree)"
-
-  if [[ -z "$target" ]]; then
-    local branches
-    branches="$(_worktree_branches --exclude-main)"
-    if [[ -z "$branches" ]]; then
-      print_warning "No worktrees to remove"
-      return 0
-    fi
-    target=$(echo "$branches" | gum choose --select-if-one --header "Remove worktree")
-    [[ -z "$target" ]] && return 0
-  fi
-
-  # Resolve to path (accepts either a branch name or a path)
-  local target_path
-  target_path="$(_worktree_path_for_branch "$target")"
-  [[ -z "$target_path" ]] && target_path="$target"
-
-  if [[ "$target_path" == "$main_worktree" ]]; then
-    print_error "Cannot remove the main worktree"
-    return 1
-  fi
-
-  if ! git worktree list | grep -q "$target_path"; then
-    print_error "Worktree not found: $target_path"
-    return 1
-  fi
-
-  gum confirm "Remove worktree: $target_path?" || {
-    print_info "Cancelled"
-    return 0
-  }
-
-  print_info "Removing worktree: $(basename "$target_path")"
-  gum spin --spinner dot --title "Removing worktree..." -- \
-    git worktree remove "$target_path" --force
-
-  if [[ $? -eq 0 ]]; then
-    print_success "Worktree removed: $(basename "$target_path")"
-  else
-    print_error "Failed to remove worktree"
-    return 1
-  fi
-}
-
-# TODO: use flags rather than subcommands so I can do wt -s rather than worktree switch
-function worktree() {
-  if ! in_git_repo; then
-    print_error "Not in a git repository"
-    return 1
-  fi
-
-  local subcmd="${1:-}"
-
-  case "$subcmd" in
-    list|create|switch|remove)
-      shift
-      ;;
-    *)
-    echo "Supported subcommands are list, create, switch, and remove"
-    exit 1
-    ;;
-  esac
-
-  "_worktree_${subcmd}" "$@"
-}
-
 function sb-worktree-init() {
   if ! in_git_repo; then
     print_error "Not in a git repository"
@@ -902,24 +549,6 @@ mise trust
   print_info "Branch: $(git_current_branch)"
 }
 
-function cdp() {
-  if [[ -z "$1" ]]; then
-    print_error "Usage: cdp <project-name>"
-    return 1
-  fi
-
-  local project="$1"
-  local directory="$HOME/src/$project"
-
-  if ! directory_exists $directory; then
-    print_error "No such project: $directory"
-    return 1
-  fi
-
-  cd "$directory" || return 1
-}
-
-
 function yaz() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	command yazi "$@" --cwd-file="$tmp"
@@ -931,3 +560,10 @@ function yaz() {
 function nid() {
   nanoid generate --alphabet 0123456789abcdefghijklmnopqrstuvwxyz
 }
+
+# =====
+# Libraries
+# =====
+
+source "$HOME/.zsh/lib/utils.zsh"
+source "$HOME/.zsh/lib/projects.zsh"
