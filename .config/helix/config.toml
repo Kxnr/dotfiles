@@ -251,8 +251,8 @@ pageup = "page_up"
 pagedown = "page_down"
 
 # Jumplist
+# TODO: add more jumplist functionality, make more operations add to jumplist
 "C-i" = "jump_forward"
-tab = "jump_forward"
 "C-o" = "jump_backward"
 "C-s" = "no_op"
 
