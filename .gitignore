@@ -1,3 +1,5 @@
 .mise.toml
 .pdbrc
 # .env*
+
+**/.claude/settings.local.json

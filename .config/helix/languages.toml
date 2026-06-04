@@ -46,3 +46,11 @@ language-servers = ["chicken-lsp-server", "scls"]
 [[language]]
 name = "rust"
 language-servers = ["rust-analyzer", "scls"]
+
+[[language]]
+name = "xml"
+formatter = { command = "tidy", args = ["-q", "-xml", "--show-errors", "0", "--show-warnings", "0", "--force-output", "--indent", "auto",  "--vertical-space", "yes", "--tidy-mark", "no", "-wrap", "120"] }
+
+[[language]]
+name = "html"
+formatter = { command = "tidy", args = ["-q", "--show-errors", "0", "--show-warnings", "0", "--force-output", "--indent", "auto",  "--vertical-space", "yes", "--tidy-mark", "no", "-wrap", "120"] }

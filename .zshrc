@@ -31,6 +31,15 @@ bindkey '^[[1;5C' forward-word                         # ctrl right
 bindkey '^H'      backward-kill-word                   # delete previous word with ctrl+backspace
 bindkey '^[[Z'    undo                                 # Shift+tab undo last action
 
+function Resume {
+  fg
+  zle push-input
+  BUFFER=""
+  zle accept-line
+}
+zle -N Resume
+bindkey "^Z" Resume
+
 # =====
 # Colors
 # =====
@@ -83,6 +92,11 @@ eval "$(atuin init zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
 
+# =====
+# Libraries
+# =====
+
+source "$HOME/src/shell-tools/zsh/init.zsh"
 
 # =====
 # Aliases
@@ -404,6 +418,39 @@ function zshrc() {
   zource
 }
 
+function _sb_setup_env_symlinks() {
+  local worktree_path="$1"
+  local envs_dir="$HOME/envs"
+
+  print_info "Setting up environment file symlinks..."
+
+  # Helper function to create a symlink, removing target if it exists
+  _sb_symlink_env() {
+    local source="$1"
+    local target="$2"
+    local project_name="$3"
+
+    if [[ ! -f "$source" ]]; then
+      print_warning "Source file not found: $source (skipping $project_name)"
+      return 0
+    fi
+
+    mkdir -p "$(dirname "$target")"
+    if [[ -e "$target" ]] || [[ -L "$target" ]]; then
+      rm -f "$target"
+    fi
+
+    ln -s "$source" "$target"
+    print_success "Linked $project_name"
+  }
+
+  _sb_symlink_env "$envs_dir/.env-api" "$worktree_path/src/projects/python/api/.env" "api"
+  _sb_symlink_env "$envs_dir/.env-data_api" "$worktree_path/src/projects/python/data_api/.env" "data_api"
+  _sb_symlink_env "$envs_dir/.env-job_schedules" "$worktree_path/src/projects/python/job_schedules/.env" "job_schedules"
+  _sb_symlink_env "$envs_dir/.env-ui" "$worktree_path/ui/.env" "ui"
+  _sb_symlink_env "$envs_dir/worktree-env" "$worktree_path/.env" "root"
+}
+
 function sb-worktree-init() {
   if ! in_git_repo; then
     print_error "Not in a git repository"
@@ -544,6 +591,8 @@ mise trust
     print_success "API environment setup complete"
   )
 
+  _sb_setup_env_symlinks "${worktree_path}"
+
   print_success "Development environment initialized!"
   print_info "Worktree location: $worktree_path"
   print_info "Branch: $(git_current_branch)"
@@ -560,10 +609,3 @@ function yaz() {
 function nid() {
   nanoid generate --alphabet 0123456789abcdefghijklmnopqrstuvwxyz
 }
-
-# =====
-# Libraries
-# =====
-
-source "$HOME/.zsh/lib/utils.zsh"
-source "$HOME/.zsh/lib/projects.zsh"

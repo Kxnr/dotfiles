@@ -154,7 +154,7 @@ nu_indicator = ">"
 zsh_indicator = "z"
 format = '[[ $indicator ](fg:color_fg0 bg:color_green)]($style)'
 
-[custom.workable]
-command = "work"
+[custom.memorable]
+command = "mem"
 when = true
 ignore_timeout = true

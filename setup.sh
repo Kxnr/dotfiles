@@ -13,19 +13,8 @@ command_exists() {
 install_build_essentials() {
     info "Installing build essentials..."
 
-    if command_exists apt-get; then
-        sudo apt-get update
-        sudo apt-get install -y build-essential curl wget unzip git
-    elif command_exists yum; then
-        sudo yum groupinstall -y "Development Tools"
-        sudo yum install -y curl wget unzip git
-    elif command_exists dnf; then
-        sudo dnf groupinstall -y "Development Tools"
-        sudo dnf install -y curl wget unzip git
-    else
-        error "Could not detect package manager. Please install build tools manually."
-        return 1
-    fi
+    sudo apt update
+    sudo apt install -y build-essential curl wget unzip git gpg
 
     success "Build essentials installed"
 }
@@ -69,31 +58,39 @@ install_mise() {
     success "chicken-lsp-server installed"
 }
 
-install_python_tools() {
-    info "Installing Python tools..."
+install_terraform() {
+    info "Installing terraform..."
 
-    # Install ruff (linter/formatter)
-    if command_exists uv; then
-        uv tool install ruff
-    else
-        error "uv not found, cannot install Python tools"
-        return 1
-    fi
+    sudo apt update
+    wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt update
+    sudo apt install terraform terraform_ls
 
-    success "Python tools installed"
+    info "Terraform installed!"
 }
 
-install_python_tools() {
-    info "Installing Python tools..."
+install_docker() {
+    info "Installing docker..."
+    # Add Docker's official GPG key:
+    sudo apt update
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-    # Install ruff (linter/formatter)
-    if ! command_exists ruff; then
-        mise use -g ruff -y
-    else
-        info "ruff already installed"
-    fi
+    # Add the repository to Apt sources:
+    sudo tee /etc/apt/sources.list.d/docker.sources << END
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+END
 
-    success "Python tools installed"
+    sudo apt update
+    info "Docker installed!"
 }
 
 install_rust() {
@@ -144,6 +141,27 @@ install_helix_dictionary() {
     curl -fsSL "$BASE_URL/index.aff" -o "$DICT_DIR/en_US.aff"
     curl -fsSL "$BASE_URL/index.dic" -o "$DICT_DIR/en_US.dic"
     success "Dictionary installed"
+}
+
+install_shell_tools() {
+    local REPO="$HOME/src/shell-tools"
+
+    if [ -d "$REPO" ]; then
+        info "shell-tools already cloned, pulling latest..."
+        git -C "$REPO" pull --ff-only
+    else
+        info "Cloning shell-tools..."
+        git clone git@github.com:kxnr/shell-tools "$REPO"
+    fi
+
+    if ! command_exists just; then
+        error "just not found; install it (cargo install just) and re-run"
+        return 1
+    fi
+
+    info "Installing shell-tools..."
+    just -f "$REPO/justfile" install
+    success "shell-tools installed"
 }
 
 install_atuin() {
@@ -225,6 +243,10 @@ setup_shell() {
     success "Shell setup complete"
 }
 
+install_formatters() {
+    sudo apt install tidy
+}
+
 install_nerd_font() {
     FONT_DIR="$HOME/.local/share/fonts"
     FONT_ZIP="$FONT_DIR/DroidSansMono.zip"
@@ -253,12 +275,15 @@ install_nerd_font() {
 info "Starting setup..."
 
 install_build_essentials
+install_docker
+install_terraform
 install_mise
 install_rust
 install_atuin
 install_python_tools
 install_nerd_font
 setup_shell
-# install_helix_dictionary is called inside install_rust after helix is cloned
+install_shell_tools
+install_formatters
 
 success "Setup complete!"
