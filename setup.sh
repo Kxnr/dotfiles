@@ -19,6 +19,13 @@ install_build_essentials() {
     success "Build essentials installed"
 }
 
+install_chicken() {
+     sudo apt install chicken-bin libchicken-dev
+     chicken-install apropos chicken-dev breadline
+     cd `csi -R chicken.platform -p '(chicken-home)'`
+     curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
+}
+
 install_mise() {
     if command_exists mise; then
         info "mise already installed, skipping..."
@@ -36,7 +43,6 @@ install_mise() {
 
     info "Installing tools via mise..."
     mise use -g python@latest -y
-    mise use -g chicken@latest -y
     mise use -g go@latest -y
     mise use -g rust@latest -y
     mise use -g eza -y
@@ -50,25 +56,10 @@ install_mise() {
     mise use -g zellij -y
     mise use -g gum -y
     mise use -g yazi -y
+    mise use -g terraform -y
+    mise use -g terraform-ls -y
 
     success "mise tools installed"
-
-    info "Installing chicken-lsp-server egg..."
-    chicken-install -s chicken-lsp-server
-    success "chicken-lsp-server installed"
-}
-
-install_terraform() {
-    info "Installing terraform..."
-
-    sudo apt update
-    wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-    gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-    sudo apt update
-    sudo apt install terraform terraform_ls
-
-    info "Terraform installed!"
 }
 
 install_docker() {
@@ -276,7 +267,6 @@ info "Starting setup..."
 
 install_build_essentials
 install_docker
-install_terraform
 install_mise
 install_rust
 install_atuin

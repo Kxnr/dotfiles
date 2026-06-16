@@ -72,8 +72,9 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/src/zide/bin:$HOME/libs/flutter_sdk/bin:$PATH"
 export SSLKEYLOGFILE="$HOME/.ssl-key.log"
 export TERM=xterm-256color
-export GIT_EDITOR=hx
-export VISUAL=hx
+export EDITOR=$(which hx)
+export VISUAL=$(which hx)
+export GIT_EDITOR=$VISUAL
 export EDITOR=$VISUAL
 export SUDO_EDITOR=$VISUAL
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
