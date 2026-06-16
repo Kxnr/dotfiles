@@ -1,0 +1,2 @@
+(import breadline)
+(current-input-port (make-readline-port))
