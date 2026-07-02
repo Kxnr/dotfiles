@@ -448,8 +448,7 @@ function _sb_setup_env_symlinks() {
   _sb_symlink_env "$envs_dir/.env-api" "$worktree_path/src/projects/python/api/.env" "api"
   _sb_symlink_env "$envs_dir/.env-data_api" "$worktree_path/src/projects/python/data_api/.env" "data_api"
   _sb_symlink_env "$envs_dir/.env-job_schedules" "$worktree_path/src/projects/python/job_schedules/.env" "job_schedules"
-  _sb_symlink_env "$envs_dir/.env-ui" "$worktree_path/ui/.env" "ui"
-  _sb_symlink_env "$envs_dir/worktree-env" "$worktree_path/.env" "root"
+  # _sb_symlink_env "$envs_dir/.env-ui" "$worktree_path/ui/.env" "ui"
 }
 
 function sb-worktree-init() {
@@ -610,3 +609,34 @@ function yaz() {
 function nid() {
   nanoid generate --alphabet 0123456789abcdefghijklmnopqrstuvwxyz
 }
+
+
+jupyter-init() {
+  # Fail fast if not in a virtualenv
+  if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "No virtualenv active. Activate one first."
+    return 1
+  fi
+
+  pip install ipywidgets ipykernel
+
+  local wt_name
+  wt_name=$(git branch --show-current)
+
+  # Normalize kernel name (safe for Jupyter)
+  local kernel_name
+  kernel_name=$(echo "$wt_name" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-_')
+
+  echo "Creating Jupyter kernel: $kernel_name"
+  echo "Using Python: $(which python)"
+
+  # Install/overwrite kernel
+  python -m ipykernel install --user \
+    --name "$kernel_name" \
+    --display-name "Python ($wt_name)"
+
+  echo "Kernel created: $kernel_name"
+}
+
+# shell-tools
+source "/home/kxnr/src/shell-tools/zsh/init.zsh"

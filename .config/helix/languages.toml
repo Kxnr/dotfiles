@@ -47,6 +47,85 @@ language-servers = ["chicken-lsp-server", "scls"]
 name = "rust"
 language-servers = ["rust-analyzer", "scls"]
 
+[language-server.biome]
+command = "biome"
+args = ["lsp-proxy"]
+
+[[language]]
+name = "json"
+auto-format = true
+language-servers = ["biome"]
+formatter = { command = "jq", args = ["."] }
+
+[[language]]
+name = "jsonc"
+auto-format = true
+language-servers = ["biome"]
+formatter = { command = "jq", args = ["."] }
+
+[[language]]
+name = "javascript"
+auto-format = true
+language-servers = ["biome", "scls"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.js"] }
+
+[[language]]
+name = "jsx"
+auto-format = true
+language-servers = ["biome", "scls"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.jsx"] }
+
+[[language]]
+name = "typescript"
+auto-format = true
+language-servers = ["biome", "scls"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.ts"] }
+
+[[language]]
+name = "tsx"
+auto-format = true
+language-servers = ["biome", "scls"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.tsx"] }
+
+[[language]]
+name = "css"
+auto-format = true
+language-servers = ["biome"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.css"] }
+
+[[language]]
+name = "graphql"
+auto-format = true
+language-servers = ["biome"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.graphql"] }
+
+[[language]]
+name = "toml"
+auto-format = true
+language-servers = ["taplo", "scls"]
+
+[[language]]
+name = "yaml"
+auto-format = true
+language-servers = ["yaml-language-server", "scls"]
+formatter = { command = "yamlfmt", args = ["-"] }
+
+[[language]]
+name = "bash"
+auto-format = true
+language-servers = ["bash-language-server", "scls"]
+formatter = { command = "shfmt", args = ["-"] }
+
+[[language]]
+name = "hcl"
+auto-format = true
+language-servers = ["terraform-ls"]
+
+[[language]]
+name = "tfvars"
+auto-format = true
+language-servers = ["terraform-ls"]
+
 [[language]]
 name = "xml"
 formatter = { command = "tidy", args = ["-q", "-xml", "--show-errors", "0", "--show-warnings", "0", "--force-output", "--indent", "auto",  "--vertical-space", "yes", "--tidy-mark", "no", "-wrap", "120"] }

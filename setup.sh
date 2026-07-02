@@ -56,6 +56,8 @@ install_mise() {
     mise use -g zellij -y
     mise use -g gum -y
     mise use -g yazi -y
+    mise use -g shfmt -y
+    mise use -g yamlfmt -y
     mise use -g terraform -y
     mise use -g terraform-ls -y
 
@@ -92,6 +94,8 @@ install_rust() {
     cargo install git-delta --locked
     cargo install simple-completion-language-server --locked
     cargo install ast-grep --locked
+    cargo install watchexec --locked
+    cargo install taplo-cli --locked
 
     success "Cargo tools installed"
 
@@ -235,7 +239,77 @@ setup_shell() {
 }
 
 install_formatters() {
-    sudo apt install tidy
+    sudo apt install -y tidy
+
+    if command_exists biome; then
+        info "biome already installed, skipping..."
+    else
+        info "Installing biome (JSON/JS formatter + LSP)..."
+        local BIOME_URL
+        BIOME_URL=$(curl -s https://api.github.com/repos/biomejs/biome/releases/latest \
+            | python3 -c "import sys,json; r=json.load(sys.stdin); print(next(a['browser_download_url'] for a in r['assets'] if a['name']=='biome-linux-x64'))")
+        mkdir -p "$HOME/.local/bin"
+        curl -L "$BIOME_URL" -o "$HOME/.local/bin/biome"
+        chmod +x "$HOME/.local/bin/biome"
+        success "biome installed"
+    fi
+}
+
+install_marksman() {
+    if command_exists marksman; then
+        info "marksman already installed, skipping..."
+        return 0
+    fi
+
+    info "Installing marksman (markdown LSP)..."
+    local URL
+    URL=$(curl -s https://api.github.com/repos/artempyanykh/marksman/releases/latest \
+        | python3 -c "import sys,json; r=json.load(sys.stdin); print(next(a['browser_download_url'] for a in r['assets'] if a['name']=='marksman-linux-x64'))")
+    mkdir -p "$HOME/.local/bin"
+    curl -fsSL "$URL" -o "$HOME/.local/bin/marksman"
+    chmod +x "$HOME/.local/bin/marksman"
+    success "marksman installed"
+}
+
+install_node_tools() {
+    if ! command_exists npm; then
+        error "npm not found. Please install mise (with node) first."
+        return 1
+    fi
+
+    info "Installing Node-based language servers..."
+
+    if ! command_exists bash-language-server; then
+        npm install -g bash-language-server
+        success "bash-language-server installed"
+    else
+        info "bash-language-server already installed, skipping..."
+    fi
+
+    if ! command_exists yaml-language-server; then
+        npm install -g yaml-language-server
+        success "yaml-language-server installed"
+    else
+        info "yaml-language-server already installed, skipping..."
+    fi
+}
+
+install_gitember() {
+    if command_exists gitember; then
+        info "gitember already installed, skipping..."
+        return 0
+    fi
+
+    local VERSION="3.3"
+    local DEB_URL="https://gitember.org/Gitember-${VERSION}.deb"
+    local TMP_DEB
+    TMP_DEB=$(mktemp --suffix=.deb)
+
+    info "Installing gitember ${VERSION}..."
+    curl -fsSL "$DEB_URL" -o "$TMP_DEB"
+    sudo dpkg -i "$TMP_DEB"
+    rm -f "$TMP_DEB"
+    success "gitember ${VERSION} installed"
 }
 
 install_nerd_font() {
@@ -275,5 +349,8 @@ install_nerd_font
 setup_shell
 install_shell_tools
 install_formatters
+install_marksman
+install_node_tools
+install_gitember
 
 success "Setup complete!"
