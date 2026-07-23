@@ -56,7 +56,7 @@ keybinds clear-defaults=true {
         bind "tab" { MovePane; }
     }
     scroll {
-        bind "e" { EditScrollback; SwitchToMode "locked"; }
+        bind "e" { EditScrollback; }
         bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
     }
     search {

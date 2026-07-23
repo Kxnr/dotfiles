@@ -79,8 +79,8 @@ export EDITOR=$VISUAL
 export SUDO_EDITOR=$VISUAL
 export AZ_AUTO_LOGIN_TYPE="DEVICE"
 
-export XPAUTH_PATH="$HOME/src/smartbidder/xpauth_dev.xpr"
-export XPRESS="$HOME/src/smartbidder/xpauth_dev.xpr"
+export XPAUTH_PATH="$HOME/src/smartbidder/src/projects/python/job_schedules/xpauth_dev.xpr"
+export XPRESS="$HOME/src/smartbidder/src/projects/python/job_schedules/xpauth_dev.xpr"
 
 # =====
 # Tool Configuration
@@ -419,6 +419,11 @@ function zshrc() {
   zource
 }
 
+function list-shell-defs() {
+  print -l ${(ok)functions}
+  alias | cut -d= -f1
+}
+
 function _sb_setup_env_symlinks() {
   local worktree_path="$1"
   local envs_dir="$HOME/envs"
@@ -502,7 +507,7 @@ PYREFLY_EOF
   _sb_write_mise_toml() {
     cat > .mise.toml << 'MISE_EOF'
 [tools]
-python = "3.10"
+python = "3.12"
 
 [env]
 _.python.venv = { path = ".venv" }
@@ -614,11 +619,9 @@ function nid() {
 jupyter-init() {
   # Fail fast if not in a virtualenv
   if [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "No virtualenv active. Activate one first."
+    print_error "No virtualenv active. Activate one first."
     return 1
   fi
-
-  pip install ipywidgets ipykernel
 
   local wt_name
   wt_name=$(git branch --show-current)
@@ -627,15 +630,54 @@ jupyter-init() {
   local kernel_name
   kernel_name=$(echo "$wt_name" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-_')
 
-  echo "Creating Jupyter kernel: $kernel_name"
-  echo "Using Python: $(which python)"
+  local kernel_dir="$HOME/.local/share/jupyter/kernels/$kernel_name"
+  if directory_exists "$kernel_dir" && command_exists gum; then
+    gum confirm "Kernel '$kernel_name' already exists. Overwrite?" || {
+      print_info "Aborted"
+      return 0
+    }
+  fi
 
-  # Install/overwrite kernel
+  print_info "Installing ipywidgets/ipykernel into $VIRTUAL_ENV..."
+  pip install --quiet ipywidgets ipykernel
+
+  print_info "Creating Jupyter kernel: $kernel_name"
+  print_info "Using Python: $(which python)"
+
   python -m ipykernel install --user \
     --name "$kernel_name" \
     --display-name "Python ($wt_name)"
 
-  echo "Kernel created: $kernel_name"
+  print_success "Kernel created: $kernel_name"
+}
+
+jupyter-kernel-rm() {
+  if ! command_exists gum; then
+    print_error "gum is required for this command"
+    return 1
+  fi
+
+  local kernels_dir="$HOME/.local/share/jupyter/kernels"
+  local kernels=("${kernels_dir}"/*(/N:t))
+
+  if is_empty_array "${kernels[@]}"; then
+    print_warning "No Jupyter kernels found"
+    return 0
+  fi
+
+  local selected
+  selected=("${(@f)$(printf '%s\n' "${kernels[@]}" | gum choose --no-limit --header "Select kernel(s) to remove:")}")
+
+  if is_empty_array "${selected[@]}"; then
+    print_info "No kernels selected"
+    return 0
+  fi
+
+  local name
+  for name in "${selected[@]}"; do
+    rm -rf "${kernels_dir:?}/${name}"
+    print_success "Removed kernel: $name"
+  done
 }
 
 # shell-tools
